@@ -159,6 +159,11 @@ a.btn{text-decoration:none;color:var(--text)}
 .toast{position:fixed;left:50%;bottom:calc(24px + var(--sab));transform:translateX(-50%) translateY(20px);opacity:0;z-index:80;background:#f2f7ff;color:#0a1120;font-weight:800;padding:11px 16px;border-radius:12px;font-size:14px;transition:.25s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 .busy{opacity:.5;pointer-events:none}
+.hrow{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;padding:10px;border-radius:12px;background:var(--card);border:1px solid var(--line)}
+.hrow .ph{width:44px;height:58px;border-radius:8px}
+.hrow.done{opacity:.55}
+.slot .av img.jz,.mini img.jz{object-position:50% 100%}
+.fn{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:#0a1120;border:1px solid var(--line);padding:5px 8px;border-radius:8px;user-select:all;-webkit-user-select:all;word-break:break-all}
 .cand{display:grid;gap:6px;margin-top:10px;max-height:52dvh;overflow:auto}
 </style>
 </head>
@@ -169,10 +174,12 @@ a.btn{text-decoration:none;color:var(--text)}
   <section id="v-result" class="view"></section>
   <section id="v-squad" class="view"></section>
   <section id="v-dex" class="view"></section>
+  <section id="v-helper" class="view"></section>
 </div>
 <div id="modal" class="modal"><div class="sheet" id="sheet"></div></div>
 <div id="toast" class="toast"></div>
 <input id="file" type="file" accept="image/*" hidden>
+<input id="bulk" type="file" accept="image/*" multiple hidden>
 <input id="packfile" type="file" accept=".json,application/json" hidden>
 
 <script>
@@ -823,17 +830,97 @@ function pushRoster(){if(!Cloud.db)return;const data=JSON.parse(JSON.stringify(R
 function saveRoster(){ROSTER.t=Date.now();lsSet('lwc_roster',ROSTER);applyRoster();pushRoster();rerender()}
 
 /* ===================== AVATAR ===================== */
+/* ===================== 클럽 유니폼 아바타 (사진 없을 때) ===================== */
+// [무늬, 메인색, 보조색, 트림색]  무늬: solid stripes hoops halves sleeves band sash diag chestband chevron
+const KITS={
+ '레알 마드리드':['solid','#ffffff','#ffffff','#c9a227'],'FC 바르셀로나':['stripes','#a50044','#004d98','#edbb00'],
+ '리버풀':['solid','#c8102e','#c8102e','#ffffff'],'인터 밀란':['stripes','#0068a8','#111111','#c9a227'],
+ '아스널':['sleeves','#ef0107','#ffffff','#ffffff'],'맨체스터 유나이티드':['solid','#da291c','#da291c','#ffffff'],
+ '첼시':['solid','#034694','#034694','#ffffff'],'유벤투스':['stripes','#111111','#ffffff','#c9a227'],
+ '맨체스터 시티':['solid','#6cabdd','#6cabdd','#ffffff'],'AC 밀란':['stripes','#fb090b','#111111','#ffffff'],
+ '바이에른 뮌헨':['solid','#dc052d','#dc052d','#ffffff'],'토트넘 홋스퍼':['solid','#ffffff','#ffffff','#132257'],
+ '파리 생제르맹':['band','#004170','#da291c','#ffffff'],'아틀레티코 마드리드':['stripes','#cb3524','#ffffff','#262f61'],
+ '나폴리':['solid','#12a0d7','#12a0d7','#ffffff'],'보루시아 도르트문트':['solid','#fde100','#fde100','#111111'],
+ '발렌시아':['solid','#ffffff','#ffffff','#111111'],'아약스':['band','#ffffff','#d2122e','#d2122e'],
+ '라치오':['solid','#87d8f7','#87d8f7','#ffffff'],'AS 로마':['solid','#8e1f2f','#8e1f2f','#f0bc42'],
+ '피오렌티나':['solid','#592c82','#592c82','#ffffff'],'에버턴':['solid','#003399','#003399','#ffffff'],
+ '레스터 시티':['solid','#003090','#003090','#fdbe11'],'뉴캐슬 유나이티드':['stripes','#111111','#ffffff','#111111'],
+ '울산 현대':['solid','#1d4fa0','#1d4fa0','#f5b700'],'셀틱':['hoops','#018749','#ffffff','#ffffff'],
+ '보타포구':['stripes','#111111','#ffffff','#111111'],'갈라타사라이':['halves','#a90432','#fdb912','#fdb912'],
+ 'FC 포르투':['stripes','#0055a4','#ffffff','#0055a4'],'포항 스틸러스':['stripes','#c8102e','#111111','#ffffff'],
+ '코린치앙스':['solid','#ffffff','#ffffff','#111111'],'웨스트햄 유나이티드':['sleeves','#7a263a','#1bb1e7','#1bb1e7'],
+ '올랭피크 마르세유':['solid','#ffffff','#ffffff','#2faee0'],'올랭피크 리옹':['chestband','#ffffff','#1b3c87','#da291c'],
+ '아스톤 빌라':['sleeves','#670e36','#95bfe5','#95bfe5'],'삼프도리아':['chestband','#1b5497','#ffffff','#e2001a'],
+ '산투스':['solid','#ffffff','#ffffff','#111111'],'볼턴 원더러스':['solid','#ffffff','#ffffff','#263c7e'],
+ '몽펠리에':['solid','#00205b','#00205b','#f37021'],'리버 플레이트':['sash','#ffffff','#e30613','#e30613'],
+ '레알 소시에다드':['stripes','#0067b1','#ffffff','#0067b1'],'노팅엄 포레스트':['solid','#dd0000','#dd0000','#ffffff'],
+ 'FC 쾰른':['solid','#ffffff','#ffffff','#ed1c24'],'AS 모나코':['diag','#e51b22','#ffffff','#ffffff'],
+ '플라멩구':['hoops','#c3281e','#111111','#ffffff'],'푸마스 UNAM':['solid','#1f2a5c','#1f2a5c','#c8a24c'],
+ '페예노르트':['halves','#e3001b','#ffffff','#111111'],'페루자':['solid','#c8102e','#c8102e','#ffffff'],
+ '파르마':['solid','#fde200','#fde200','#003da5'],'크루제이루':['solid','#0033a0','#0033a0','#ffffff'],
+ '츠르베나 즈베즈다':['stripes','#e30613','#ffffff','#e30613'],'지롱댕 보르도':['chevron','#001a3f','#ffffff','#ffffff'],
+ '전북 현대':['solid','#00845a','#00845a','#ffe100'],'전남 드래곤즈':['solid','#ffd400','#ffd400','#111111'],
+ '울버햄튼 원더러스':['solid','#fdb913','#fdb913','#231f20'],'아틀레티코 나시오날':['stripes','#009b3a','#ffffff','#009b3a'],
+ '아인트라흐트 프랑크푸르트':['stripes','#e1000f','#111111','#ffffff'],'아우크스부르크':['solid','#ffffff','#ffffff','#ba3733'],
+ '스포르팅 CP':['hoops','#008057','#ffffff','#008057'],'스파르타크 모스크바':['chestband','#d50000','#ffffff','#ffffff'],
+ '스타드 드 랭스':['sleeves','#e2001a','#ffffff','#ffffff'],'스완지 시티':['solid','#ffffff','#ffffff','#111111'],
+ '수원 삼성 블루윙즈':['solid','#1e3f8c','#1e3f8c','#e60012'],'세비야':['solid','#ffffff','#ffffff','#d71920'],
+ '사우샘프턴':['stripes','#d71920','#ffffff','#111111'],'비야레알':['solid','#ffe667','#ffe667','#005187'],
+ '블랙풀':['solid','#f68712','#f68712','#ffffff'],'브라이턴':['stripes','#0057b8','#ffffff','#0057b8'],
+ '보카 주니어스':['chestband','#103f79','#f3b229','#f3b229'],'보루시아 묀헨글라트바흐':['solid','#ffffff','#ffffff','#00a650'],
+ '벨레스 사르스필드':['chevron','#ffffff','#004b98','#004b98'],'벤피카':['solid','#e30613','#e30613','#ffffff'],
+ '베르더 브레멘':['solid','#1d9053','#1d9053','#ffffff'],'바이어 레버쿠젠':['solid','#e32221','#e32221','#111111'],
+ '마인츠 05':['solid','#c3141e','#c3141e','#ffffff'],'레알 베티스':['stripes','#00954c','#ffffff','#00954c'],
+ '디나모 모스크바':['solid','#0057b7','#0057b7','#ffffff'],'데포르티보 라코루냐':['stripes','#0056a3','#ffffff','#0056a3'],
+ '대구 FC':['solid','#66b2e4','#66b2e4','#13304f'],'광저우 에버그란데':['solid','#c8102e','#c8102e','#ffd700'],
+ 'RB 라이프치히':['solid','#ffffff','#ffffff','#dd0741'],'CSKA 모스크바':['halves','#c8102e','#0033a0','#ffffff']
+};
+const FALLBACK_KIT=['#1e88e5','#e53935','#43a047','#8e24aa','#fb8c00','#00897b','#3949ab','#d81b60','#6d4c41','#546e7a'];
+function kitOf(club){if(KITS[club])return KITS[club];let h=0;for(const ch of String(club))h=(h*31+ch.charCodeAt(0))>>>0;const c=FALLBACK_KIT[h%FALLBACK_KIT.length];return ['solid',c,c,'#ffffff']}
+const lum=hex=>{const n=parseInt(hex.slice(1),16);return (0.299*(n>>16)+0.587*((n>>8)&255)+0.114*(n&255))/255};
+const BG={FW:['#5a1f2a','#1a1424'],MF:['#164a32','#101c22'],DF:['#173d66','#0f1729'],GK:['#5c4310','#1b170f']};
+const JCACHE={};
+function initials(en){const w=en.replace(/[^A-Za-zÀ-ž\s'-]/g,'').split(/[\s-]+/).filter(Boolean);if(!w.length)return '';return (w.length===1?w[0].slice(0,2):w[0][0]+w[w.length-1][0]).toUpperCase()}
+function jersey(p){
+  const [pat,c1,c2,tr]=kitOf(p.club);const ini=initials(p.en);const key=p.cat+'|'+p.club+'|'+ini;
+  if(JCACHE[key])return JCACHE[key];
+  const bg=BG[p.cat]||BG.FW;
+  const body='M28 160 L28 112 L10 122 L3 97 Q9 84 36 78 L48 74 Q60 86 72 74 L84 78 Q111 84 117 97 L110 122 L92 112 L92 160 Z';
+  const sl='M36 79 L28 112 L10 122 L3 97 Q9 84 36 79 Z M84 79 L92 112 L110 122 L117 97 Q111 84 84 79 Z';
+  let fill='';
+  if(pat==='stripes')for(let x=8;x<120;x+=16)fill+=`<rect x="${x}" y="60" width="8" height="110" fill="${c2}"/>`;
+  else if(pat==='hoops')for(let y=84;y<165;y+=16)fill+=`<rect x="0" y="${y}" width="120" height="8" fill="${c2}"/>`;
+  else if(pat==='halves')fill=`<rect x="60" y="60" width="60" height="110" fill="${c2}"/>`;
+  else if(pat==='band')fill=`<rect x="46" y="60" width="28" height="110" fill="${c2}"/>`;
+  else if(pat==='sash')fill=`<path d="M22 78 L40 78 L104 160 L84 160 Z" fill="${c2}"/>`;
+  else if(pat==='diag')fill=`<path d="M0 60 L120 60 L120 70 L0 170 Z" fill="${c2}"/>`;
+  else if(pat==='chestband')fill=`<rect x="0" y="104" width="120" height="16" fill="${c2}"/>`;
+  else if(pat==='chevron')fill=`<path d="M28 84 L60 124 L92 84 L92 98 L60 138 L28 98 Z" fill="${c2}"/>`;
+  else if(pat==='sleeves')fill=`<path d="${sl}" fill="${c2}"/>`;
+  const dark=lum(c1)>0.72;
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160"><defs><linearGradient id="g" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/></linearGradient><clipPath id="c"><path d="${body}"/></clipPath><linearGradient id="s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient></defs>
+<rect width="120" height="160" fill="url(#g)"/>
+<rect x="52" y="58" width="16" height="20" rx="6" fill="#c9cfdb" opacity=".55"/>
+<circle cx="60" cy="44" r="19" fill="#c9cfdb" opacity=".55"/>
+<g clip-path="url(#c)"><rect width="120" height="160" fill="${c1}"/>${fill}<rect width="120" height="160" fill="url(#s)"/></g>
+<path d="${body}" fill="none" stroke="#00000040" stroke-width="1"/>
+<path d="M47 74 Q60 88 73 74" fill="none" stroke="${tr}" stroke-width="4" stroke-linecap="round"/>
+<path d="M10 122 L3 97 M110 122 L117 97" stroke="${tr}" stroke-width="4" stroke-linecap="round"/>
+<text x="60" y="138" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="24" fill="${dark?'#1b2130':'#ffffff'}" stroke="${dark?'#ffffffb0':'#000000a0'}" stroke-width="3" paint-order="stroke">${esc(ini)}</text></svg>`;
+  return JCACHE[key]='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+
 const SIL='<svg viewBox="0 0 100 100"><circle cx="50" cy="34" r="18" fill="#ffffff26"/><path d="M14 98c2-24 16-36 36-36s34 12 36 36z" fill="#ffffff26"/></svg>';
 function avatar(p,cls=''){
   const src=photoOf(p.id);
   if(src)return `<div class="ph ${p.cat} ${cls}"><img src="${esc(src)}" alt="${esc(p.ko)}" loading="lazy" decoding="async"></div>`;
-  return `<div class="ph ${p.cat} ${cls}"><div class="sil">${SIL}<span class="ini">${esc(p.pos)}</span></div></div>`;
+  return `<div class="ph ${p.cat} ${cls}"><img class="jz" src="${jersey(p)}" alt="${esc(p.ko)}" decoding="async"></div>`;
 }
 
 /* ===================== NAV ===================== */
 let VIEW='home';
 function show(v){VIEW=v;document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));rerender();window.scrollTo(0,0)}
-function rerender(){({home:renderHome,match:renderMatch,result:renderResult,squad:renderSquad,dex:renderDex})[VIEW]()}
+function rerender(){({home:renderHome,match:renderMatch,result:renderResult,squad:renderSquad,dex:renderDex,helper:renderHelper})[VIEW]()}
 function refreshPhotos(){ if(VIEW!=='match'||!animLock) rerender(); if($('#modal').classList.contains('on')&&MODAL.type==='photo')renderPhotoModal(); }
 
 /* ===================== HOME ===================== */
@@ -861,7 +948,7 @@ function renderHome(){
   }
   h+=`</div><div class="tools">
     <button class="tool" data-act="go" data-v="squad"><b>🏟️ 드림 스쿼드</b><span>토너먼트 결과로 4-3-3 자동 구성</span></button>
-    <button class="tool" data-act="go" data-v="dex"><b>📋 선수 명단·사진</b><span>사진 ${pc}/${active().length} · 명단 수정·추가</span></button></div>
+    <button class="tool" data-act="go" data-v="dex"><b>📋 선수 명단·사진</b><span>사진 ${pc}/${active().length} · 사진 도우미 · 명단 수정</span></button></div>
   <div class="foot">${esc(syncMsg)}<br>선수 사진은 저작권 때문에 기본 제공하지 않아요. 카드의 📷 버튼이나 ‘선수 사진 관리’에서 구글 이미지를 복사·붙여넣기 하거나 갤러리에서 골라 넣으면 바로 반영돼요.</div>`;
   $('#v-home').innerHTML=h;
 }
@@ -1028,7 +1115,10 @@ function renderDex(){
   const grid=list.slice(0,DX.limit).map(p=>`<button class="dc" data-act="photo" data-id="${p.id}" data-ctx="dex">${avatar(p)}<span class="posb pos ${p.cat}">${esc(p.pos)}</span>${photoOf(p.id)?'<span class="ok">✓</span>':''}<div class="k">${esc(p.ko)}${p.custom?' <span style="color:var(--accent)">＋</span>':p.edited?' <span style="color:var(--accent)">✎</span>':''}</div><div class="c">${esc(p.club)}</div></button>`).join('');
   const body=`<div class="muted" style="font-size:12px;margin-top:10px">${list.length}명 · 사진 등록 ${pc}/${active().length} · ${esc(syncMsg)}</div>
     <div class="dgrid">${grid}</div>${list.length>DX.limit?`<div style="text-align:center;margin-top:14px"><button class="btn" data-act="more">더 보기 (${list.length-DX.limit}명 남음)</button></div>`:''}
-    <div class="step" style="margin-top:22px"><div class="h">📦 사진·명단 파일</div>
+    <div class="step" style="margin-top:22px"><div class="h">📸 사진 빨리 넣기</div>
+      <div class="row"><button class="btn sm pri" data-act="go" data-v="helper">사진 작업 도우미</button><button class="btn sm" data-act="bulk">한꺼번에 넣기</button></div>
+      <p>도우미에서 선수별 검색 링크와 저장할 파일 이름을 확인하고, 모은 사진을 ‘한꺼번에 넣기’로 한 번에 올리세요.</p></div>
+    <div class="step" style="margin-top:12px"><div class="h">📦 사진·명단 파일</div>
       <div class="row"><button class="btn sm" data-act="exportpack">내보내기 (pack.json)</button><button class="btn sm" data-act="importpack">가져오기</button></div>
       <p>지금 보이는 사진과 명단을 파일 하나로 저장해요. 웹사이트에 이 파일을 올리면 모든 방문자에게 같은 사진·명단이 보이고, 다른 기기로 옮길 때도 쓸 수 있어요.</p></div>
     ${(ROSTER.removed.length||ROSTER.added.length||Object.keys(ROSTER.edits).length)?`<div style="text-align:center;margin-top:22px"><button class="btn sm ghost danger" data-act="resetroster">↺ 명단을 처음 상태(기본 500명)로 되돌리기</button></div>`:''}`;
@@ -1043,6 +1133,56 @@ function renderDex(){
    <button class="chip ${DX.cat==='DEL'?'on':''}" data-act="dcat" data-v="DEL">빠진 선수 ${ROSTER.removed.length}</button></div></div><div id="dexbody">${body}</div>`;
   $('#dq').addEventListener('input',e=>{DX.q=e.target.value;DX.limit=60;renderDex()});
 }
+
+
+/* ===================== 사진 작업 도우미 & 한꺼번에 넣기 ===================== */
+let HX={cat:'ALL',missing:true,limit:100};
+const fileNameOf = p => p.id+'.jpg';
+function helperList(){return active().filter(p=>(HX.cat==='ALL'||p.cat===HX.cat)&&(!HX.missing||!photoOf(p.id)))}
+function renderHelper(){
+  const all=active(),done=all.filter(p=>photoOf(p.id)).length,list=helperList();
+  const rows=list.slice(0,HX.limit).map((p,i)=>{const has=!!photoOf(p.id);const q=encodeURIComponent(`${p.en} ${p.club}`);
+    return `<div class="hrow ${has?'done':''}">${avatar(p)}<div style="min-width:0">
+      <div style="font-weight:800;font-size:14px">${i+1}. ${esc(p.ko)} <span class="muted" style="font-weight:500;font-size:12px">${esc(p.en)} · ${esc(p.club)}</span>${has?' <span style="color:var(--accent)">✓</span>':''}</div>
+      <div class="row" style="margin-top:6px;flex-wrap:nowrap"><a class="btn sm" href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">🔎 검색</a>
+      <span class="fn" style="flex:1;min-width:0">${esc(fileNameOf(p))}</span><button class="btn sm" data-act="copyfn" data-v="${esc(fileNameOf(p))}">복사</button></div></div></div>`}).join('');
+  $('#v-helper').innerHTML=`<div class="mhead"><button class="btn sm" data-act="go" data-v="dex">←</button><div class="ttl"><div class="r disp">사진 작업 도우미</div><div class="m">사진 ${done} / ${all.length} 등록</div></div><button class="btn sm pri" data-act="bulk">📁 넣기</button></div>
+   <div class="prog"><i style="width:${all.length?done/all.length*100:0}%"></i></div>
+   <div class="step"><div class="h"><i>1</i>🔎 검색을 눌러 사진 고르기</div><p>전성기 클럽 이름까지 넣어 검색해요. 마음에 드는 사진을 크게 연 뒤 <b>우클릭 → 다른 이름으로 이미지 저장</b>.</p>
+    <div class="h" style="margin-top:10px"><i>2</i>파일 이름을 복사해 붙여넣고 저장</div><p>한 폴더에 모아 두세요. 파일 이름은 <b>${esc('lionel-messi.jpg')}</b>처럼 목록의 이름을 쓰는 게 가장 정확하지만, <b>메시.jpg</b>가 아닌 <b>리오넬 메시.jpg</b>처럼 한글 전체 이름이나 영문 이름(<b>Lionel Messi.png</b>)도 알아봐요.</p>
+    <div class="h" style="margin-top:10px"><i>3</i>📁 넣기로 폴더 안 사진을 전부 선택</div><p>이름이 맞는 선수에게 자동으로 들어가요. PC에서 하는 걸 추천해요 (휴대폰 갤러리는 파일 이름이 IMG_1234처럼 바뀌어요).</p></div>
+   <div class="row" style="margin-top:12px">${['ALL','FW','MF','DF','GK'].map(k=>`<button class="chip ${HX.cat===k?'on':''}" data-act="hcat" data-v="${k}">${k==='ALL'?'전체':CATS[k].ko}</button>`).join('')}
+    <button class="chip ${HX.missing?'on':''}" data-act="hmiss">사진 없는 선수만</button></div>
+   <div class="muted" style="font-size:12px;margin:10px 0 8px">${list.length}명</div>
+   <div style="display:grid;gap:8px">${rows||'<div class="muted">모든 선수에게 사진이 있어요 🎉</div>'}</div>
+   ${list.length>HX.limit?`<div style="text-align:center;margin-top:14px"><button class="btn" data-act="hmore">더 보기 (${list.length-HX.limit}명 남음)</button></div>`:''}`;
+}
+const normName = s => s.normalize('NFC').toLowerCase().replace(/\s+/g,'');
+function matchFile(name){
+  let base=name.replace(/\.[^.]+$/,'').replace(/\s*\(\d+\)$/,'').replace(/[_]+/g,' ').trim();
+  if(!base)return null;
+  if(BYID[base.toLowerCase()])return BYID[base.toLowerCase()];
+  const sl=slug(base),nk=normName(base);
+  return PLAYERS.find(p=>p.id===sl||slug(p.en)===sl||normName(p.ko)===nk)||null;
+}
+async function bulkUpload(files){
+  files=[...files].filter(f=>/^image\//.test(f.type||'image/'));if(!files.length)return;
+  const ok=[],miss=[];MODAL={type:'bulk'};openModal();
+  const prog=()=>{$('#sheet').innerHTML=`<h3>사진 넣는 중…</h3><div class="prog" style="margin-top:14px"><i style="width:${(ok.length+miss.length)/files.length*100}%"></i></div><div class="muted" style="font-size:13px;margin-top:8px">${ok.length+miss.length} / ${files.length} · 성공 ${ok.length}</div>`};
+  prog();
+  for(const f of files){const p=matchFile(f.name);
+    if(!p){miss.push(f.name);prog();continue}
+    try{const blob=await processImage(f);await savePhoto(p.id,blob);ok.push(p)}catch(e){miss.push(f.name)}
+    prog();
+  }
+  $('#sheet').innerHTML=`<div class="row" style="justify-content:space-between"><h3>완료: ${ok.length}장 넣음</h3><button class="btn sm" data-act="close">닫기</button></div>
+   ${ok.length?`<p class="muted" style="font-size:13px;line-height:1.6">${ok.slice(0,60).map(p=>esc(p.ko)).join(', ')}${ok.length>60?` 외 ${ok.length-60}명`:''}</p>`:''}
+   ${miss.length?`<div class="step"><div class="h">⚠️ 선수를 찾지 못한 파일 ${miss.length}개</div><p>파일 이름을 도우미 목록의 이름(예: lionel-messi.jpg)으로 바꿔 다시 올려주세요.</p><div class="fn" style="margin-top:8px;max-height:160px;overflow:auto;user-select:text">${miss.map(esc).join('<br>')}</div></div>`:''}`;
+  rerender();
+}
+document.addEventListener('dragover',e=>{if(VIEW==='helper'||VIEW==='dex')e.preventDefault()});
+document.addEventListener('drop',e=>{if((VIEW==='helper'||VIEW==='dex')&&!$('#modal').classList.contains('on')){e.preventDefault();const f=e.dataTransfer&&e.dataTransfer.files;if(f&&f.length)bulkUpload([...f])}});
+$('#bulk').addEventListener('change',e=>{const f=e.target.files;const arr=f?[...f]:[];e.target.value='';if(arr.length)bulkUpload(arr)});
 
 /* ===================== MODAL ===================== */
 let MODAL={type:null};
@@ -1177,6 +1317,11 @@ document.addEventListener('click',e=>{
     case 'copyres':{const c=BYID[LAST.champ];const g=rs=>LAST.elim.filter(x=>x[1]===rs).map(x=>BYID[x[0]].ko).reverse();
       const r3=[...new Set(LAST.elim.map(e=>e[1]).filter(x=>x>2))].sort((a,b)=>a-b)[0];
       copyText(`🏆 나의 ${MODES[LAST.mode].ko} ${LAST.n}강 우승: ${c.ko} (${c.club})\n🥈 준우승: ${g(2).join(', ')}${r3?`\n${r3}강: ${g(r3).join(', ')}`:''}\n#레전드월드컵`);break}
+    case 'bulk':$('#bulk').click();break;
+    case 'hcat':HX.cat=el.dataset.v;HX.limit=100;renderHelper();break;
+    case 'hmiss':HX.missing=!HX.missing;HX.limit=100;renderHelper();break;
+    case 'hmore':HX.limit+=100;renderHelper();break;
+    case 'copyfn':{const v=el.dataset.v;navigator.clipboard.writeText(v).then(()=>toast('복사: '+v)).catch(()=>toast('이름을 길게 눌러 복사하세요'));break}
     case 'exportpack':exportPack(el);break;
     case 'importpack':$('#packfile').click();break;
     case 'addp':openEdit(null);break;
