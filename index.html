@@ -842,7 +842,9 @@ let SZ = lsGet('lwc_sizes',{});
 const sizeList = m => SIZES[m].filter(sz=>sz==='full'||sz<poolOf(m).length);
 const sizeOf = m => sizeList(m).includes(SZ[m])?SZ[m]:'full';
 const cntOf = (m,sz) => sz==='full'?poolOf(m).length:sz;
-const matchInfo = n => {let P=1;while(P*2<=n)P*=2;return n===P?`${n-1}경기`:`예선 ${n-P}경기 → ${P}강 · 총 ${n-1}경기`};
+const pow2 = n => {let P=1;while(P*2<=n)P*=2;return P};
+const matchInfo = n => {if(n===pow2(n))return `${n-1}경기`;const h=Math.ceil(n/2),P=pow2(h);
+  return `1라운드 ${Math.floor(n/2)}경기${h===P?'':` → 예선 ${h-P}경기`} → ${P}강 · 총 ${n-1}경기`};
 function renderHome(){
   const pc=photoCount();
   let h=`<div class="hero"><h1 class="disp">레전드 <b>월드컵</b></h1><p>역대 인기 축구선수 ${active().length}명 · 이상형 월드컵 &amp; 4-3-3 드림 스쿼드</p></div>`;
@@ -873,7 +875,7 @@ function openSize(mode){
        <div class="disp" style="font-size:24px;min-width:84px;color:${mode==='ALL'?'var(--accent)':'var(--'+mode+')'}">${n}강</div>
        <div><div class="k">${sz==='full'?'전체 출전 ('+n+'명 전원)':'랜덤 '+n+'명 추첨'}</div><div class="c">${matchInfo(n)}</div></div>
        <span class="rk">${sz===cur?'최근 선택':''}</span></button>`}).join('')}</div>
-   <div class="muted" style="font-size:12px;margin-top:10px">2의 거듭제곱(16·32·64·128·256)이 아니면 예선을 먼저 치러 인원을 맞춰요.</div>`;
+   <div class="muted" style="font-size:12px;margin-top:10px">16·32·64·128·256강이 아니면 전원이 1라운드를 치른 뒤, 필요하면 예선으로 인원을 맞춰 정식 토너먼트로 들어가요.</div>`;
   openModal();
 }
 function startTournament(mode,size){
@@ -881,11 +883,12 @@ function startTournament(mode,size){
   let ids=shuffle(poolOf(mode).map(p=>p.id));
   if(size!=='full'&&ids.length>size)ids=ids.slice(0,size);
   T={mode,size,n:ids.length,total:ids.length-1,played:0,elim:[],hist:[]};
-  setupRound(ids);saveProgress();show('match');
+  setupRound(ids,true);saveProgress();show('match');
 }
-function setupRound(ent){
+function setupRound(ent,first){
   const len=ent.length;let P=1;while(P*2<=len)P*=2;
-  if(len===P){T.cur=ent;T.byes=[];T.prelim=false;T.label=len===2?'결승':len===4?'준결승':len+'강'}
+  if(first&&len!==P){const m=Math.floor(len/2);T.cur=ent.slice(0,2*m);T.byes=ent.slice(2*m);T.prelim=true;T.label=`1라운드 ${len}→${Math.ceil(len/2)}`}
+  else if(len===P){T.cur=ent;T.byes=[];T.prelim=false;T.label=len===2?'결승':len===4?'준결승':len+'강'}
   else{const m=len-P;T.cur=ent.slice(0,2*m);T.byes=ent.slice(2*m);T.prelim=true;T.label=`예선 ${len}→${P}`}
   T.rsize=len;T.i=0;T.win=[];
 }
