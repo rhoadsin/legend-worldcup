@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>레전드 월드컵 — 축구선수 이상형 월드컵 &amp; 드림 스쿼드</title>
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="레전드월드컵">
+<meta name="application-name" content="레전드월드컵">
+<meta name="theme-color" content="#0a1120">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1120; --bg2:#0f1a2e; --card:#14203a; --card2:#1a2948; --line:#263a60;
+  --text:#eaf0fa; --muted:#8c9bb8; --accent:#c8ff3d; --accent-ink:#13200a;
+  --FW:#ff5c61; --MF:#2fd47c; --DF:#3ea2ff; --GK:#ffb21f;
+  --r:16px;
+  --sat:env(safe-area-inset-top,0px); --sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","Noto Sans KR",sans-serif;}
+body{min-height:100dvh;background:
+  radial-gradient(1200px 500px at 50% -200px,#1b3a2a55,transparent 70%),
+  repeating-linear-gradient(180deg,#0a1120 0 64px,#0b1323 64px 128px);}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.wrap{max-width:980px;margin:0 auto;padding:calc(14px + var(--sat)) 16px calc(28px + var(--sab))}
+.view{display:none}.view.on{display:block}
+.disp{font-family:"Black Han Sans",-apple-system,sans-serif;font-weight:400;letter-spacing:.5px}
+.muted{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 16px;border-radius:12px;background:var(--card2);border:1px solid var(--line);font-weight:700;font-size:15px}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.ghost{background:transparent}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:10px}
+.btn.danger{color:#ff8a8a}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chip{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);font-size:13px;font-weight:700;color:var(--muted)}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.pos{display:inline-block;font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;color:#081018;letter-spacing:.3px}
+.pos.FW{background:var(--FW)}.pos.MF{background:var(--MF)}.pos.DF{background:var(--DF)}.pos.GK{background:var(--GK)}
+
+/* HOME */
+.hero{text-align:center;padding:18px 0 8px}
+.hero h1{font-size:40px;margin:0;line-height:1.05}
+.hero h1 b{color:var(--accent);font-weight:400}
+.hero p{margin:8px 0 0;color:var(--muted);font-size:14px}
+.resume{margin:16px 0 0;padding:14px;border-radius:var(--r);background:linear-gradient(135deg,#24411a,#16263f);border:1px solid #3e6b2a;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.sec-t{margin:22px 0 10px;font-size:13px;color:var(--muted);font-weight:800;letter-spacing:1px}
+.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mode{position:relative;text-align:left;padding:16px 14px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);overflow:hidden;min-height:112px}
+.mode.big{grid-column:1/-1;min-height:120px;background:linear-gradient(120deg,#1f3567,#14203a 60%)}
+.mode .n{font-size:30px;line-height:1}
+.mode .t{font-size:16px;font-weight:800;margin-top:6px}
+.mode .s{font-size:12px;color:var(--muted);margin-top:4px}
+.mode .bar{position:absolute;left:0;top:0;bottom:0;width:5px}
+.mode .done{position:absolute;right:10px;top:10px;font-size:11px;font-weight:800;background:#ffffff14;padding:3px 8px;border-radius:999px;max-width:58%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.tool{padding:16px 14px;border-radius:var(--r);background:var(--bg2);border:1px dashed var(--line);text-align:left}
+.tool b{display:block;font-size:16px}
+.tool span{font-size:12px;color:var(--muted)}
+.foot{margin-top:22px;font-size:12px;color:var(--muted);line-height:1.6}
+@media(min-width:760px){.modes{grid-template-columns:repeat(4,1fr)}.mode.big{grid-column:1/-1}.hero h1{font-size:54px}}
+
+/* MATCH */
+.mhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mhead .ttl{text-align:center;flex:1}
+.mhead .ttl .r{font-size:28px;line-height:1.1}
+.mhead .ttl .m{font-size:12px;color:var(--muted);font-weight:700}
+.prog{height:6px;background:var(--bg2);border-radius:99px;margin:10px 0 4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.pcount{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.duel{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.vs{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);z-index:3;width:50px;height:50px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:20px;box-shadow:0 0 0 5px var(--bg),0 6px 20px #000a}
+.pc{position:relative;display:block;width:100%;text-align:left;border-radius:18px;overflow:hidden;background:var(--card);border:2px solid var(--line);transition:transform .25s,opacity .25s,border-color .2s}
+.pc:hover{border-color:#41598a}
+.pc .ph{aspect-ratio:3/4;max-height:58dvh;width:100%}
+.pc .info{padding:10px 10px 12px}
+.pc .ko{font-size:18px;font-weight:900;line-height:1.2;word-break:keep-all}
+.pc .en{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc .club{font-size:12.5px;margin-top:6px;color:#cfd9ec;display:flex;gap:6px;align-items:center}
+.pc .club:before{content:"";width:6px;height:6px;border-radius:2px;background:var(--muted);flex:none}
+.pc.win{transform:scale(1.03);border-color:var(--accent)}
+.pc.lose{opacity:.25;transform:scale(.96)}
+.cam{position:absolute;right:8px;top:8px;z-index:2;width:36px;height:36px;border-radius:50%;background:#0a1120cc;border:1px solid #ffffff30;display:grid;place-items:center;font-size:16px}
+.pc .posb{position:absolute;left:8px;top:8px;z-index:2}
+.mfoot{display:flex;justify-content:center;gap:10px;margin-top:14px}
+@media(min-width:760px){.duel{gap:28px}.pc .ko{font-size:24px}.vs{width:64px;height:64px;font-size:26px}.pc .ph{max-height:52vh}}
+
+/* avatar / placeholder */
+.ph{position:relative;background:#0e1830;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;object-position:50% 15%;display:block}
+.ph .sil{position:absolute;inset:0;display:grid;place-items:center}
+.ph .sil svg{width:62%;height:auto;opacity:.9}
+.ph .sil .ini{position:absolute;bottom:8%;left:0;right:0;text-align:center;font-family:"Black Han Sans",sans-serif;font-size:clamp(14px,5vw,30px);color:#ffffffd0;letter-spacing:1px}
+.ph.FW{background:linear-gradient(160deg,#5a1f2a,#1a1424)}.ph.MF{background:linear-gradient(160deg,#164a32,#101c22)}
+.ph.DF{background:linear-gradient(160deg,#173d66,#0f1729)}.ph.GK{background:linear-gradient(160deg,#5c4310,#1b170f)}
+
+/* RESULT */
+.champ{margin:14px auto 0;max-width:340px;text-align:center}
+.champ .crown{font-size:44px}
+.champ .pc{border-color:var(--accent);box-shadow:0 0 0 4px #c8ff3d22,0 20px 60px #c8ff3d22}
+.rlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.mini{display:flex;gap:10px;align-items:center;padding:8px;border-radius:12px;background:var(--card);border:1px solid var(--line);text-align:left;width:100%}
+.mini .ph{width:42px;height:42px;border-radius:10px;flex:none}
+.mini .ph .sil .ini{font-size:12px}
+.mini .k{font-weight:800;font-size:14px;line-height:1.2;word-break:keep-all}
+.mini .c{font-size:11px;color:var(--muted)}
+.mini .rk{margin-left:auto;font-size:11px;color:var(--accent);font-weight:800;white-space:nowrap}
+
+/* SQUAD */
+.pitch{position:relative;margin:12px auto 0;max-width:560px;aspect-ratio:3/4;border-radius:20px;overflow:hidden;
+  background:repeating-linear-gradient(180deg,#1d6b38 0 9.09%,#1a6233 9.09% 18.18%);box-shadow:inset 0 0 80px #0006}
+.pitch svg.lines{position:absolute;inset:0;width:100%;height:100%}
+.slot{position:absolute;transform:translate(-50%,-50%);width:23%;display:flex;flex-direction:column;align-items:center;gap:3px}
+.slot .av{width:min(60px,13.5vw);height:min(60px,13.5vw);border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 4px 12px #0007}
+.slot .av .ph{width:100%;height:100%}
+.slot .av .ph .sil .ini{font-size:11px;bottom:12%}
+.slot .nm{font-size:12px;font-weight:900;background:#081018d9;padding:3px 7px;border-radius:7px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;word-break:keep-all}
+.slot .sp{font-size:10px;font-weight:800;color:#e8ffe0d0}
+.slot.empty .av{border-style:dashed;border-color:#ffffffa0;background:#0003;display:grid;place-items:center;font-size:22px;color:#fff}
+.slot .star{position:absolute;top:-6px;right:12%;font-size:16px}
+.srcs{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;justify-content:center}
+.slist{margin-top:14px;display:grid;gap:6px}
+.slist .mini .rk{color:var(--muted);font-weight:700}
+
+/* DEX */
+.dexbar{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px;border-bottom:1px solid var(--line)}
+.search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg2);color:var(--text);font-size:16px;outline:none}
+.dgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+@media(min-width:600px){.dgrid{grid-template-columns:repeat(5,1fr)}}
+@media(min-width:900px){.dgrid{grid-template-columns:repeat(6,1fr)}}
+.dc{border-radius:12px;overflow:hidden;background:var(--card);border:1px solid var(--line);text-align:left;position:relative}
+.dc .ph{aspect-ratio:3/4}
+.dc .ph .sil .ini{font-size:14px}
+.dc .k{font-size:12.5px;font-weight:800;padding:6px 7px 0;line-height:1.25;word-break:keep-all}
+.dc .c{font-size:10.5px;color:var(--muted);padding:0 7px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dc .posb{position:absolute;left:5px;top:5px}
+.dc .ok{position:absolute;right:5px;top:5px;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:11px;display:grid;place-items:center;font-weight:900}
+
+/* MODAL */
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:flex-end;justify-content:center;background:#000b}
+.modal.on{display:flex}
+.sheet{width:100%;max-width:560px;max-height:92dvh;overflow:auto;background:var(--bg2);border:1px solid var(--line);border-radius:22px 22px 0 0;padding:18px 16px calc(18px + var(--sab))}
+@media(min-width:700px){.modal{align-items:center}.sheet{border-radius:22px}}
+.sheet h3{margin:0;font-size:20px}
+.ped{display:grid;grid-template-columns:110px 1fr;gap:14px;margin-top:14px;align-items:start}
+.ped .ph{aspect-ratio:3/4;border-radius:12px}
+.step{margin-top:14px;padding:12px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.step .h{font-weight:800;font-size:14px;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.step .h i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:12px;flex:none}
+.step p{margin:6px 0 0;font-size:12.5px;color:var(--muted);line-height:1.55}
+.paste{margin-top:8px;min-height:84px;border:2px dashed #4f6a9c;border-radius:12px;display:block;text-align:center;padding:18px 10px;color:var(--muted);font-size:13.5px;line-height:1.45;outline:none;background:#0a1120;-webkit-user-select:text;user-select:text;caret-color:transparent}
+.paste:focus{border-color:var(--accent);color:var(--text)}
+.paste img{display:none}
+a.btn{text-decoration:none;color:var(--text)}
+.toast{position:fixed;left:50%;bottom:calc(24px + var(--sab));transform:translateX(-50%) translateY(20px);opacity:0;z-index:80;background:#f2f7ff;color:#0a1120;font-weight:800;padding:11px 16px;border-radius:12px;font-size:14px;transition:.25s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.busy{opacity:.5;pointer-events:none}
+.cand{display:grid;gap:6px;margin-top:10px;max-height:52dvh;overflow:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="v-home" class="view on"></section>
+  <section id="v-match" class="view"></section>
+  <section id="v-result" class="view"></section>
+  <section id="v-squad" class="view"></section>
+  <section id="v-dex" class="view"></section>
+</div>
+<div id="modal" class="modal"><div class="sheet" id="sheet"></div></div>
+<div id="toast" class="toast"></div>
+<input id="file" type="file" accept="image/*" hidden>
+<input id="packfile" type="file" accept=".json,application/json" hidden>
+
+<script>
+/* ===================== DATA ===================== */
+const RAW = `#FW
+펠레|Pelé|CF|산투스
+디에고 마라도나|Diego Maradona|CF|나폴리
+리오넬 메시|Lionel Messi|RW|FC 바르셀로나
+크리스티아누 호날두|Cristiano Ronaldo|LW|레알 마드리드
+호나우두|Ronaldo Nazário|ST|인터 밀란
+요한 크루이프|Johan Cruyff|CF|아약스
+알프레도 디 스테파노|Alfredo Di Stéfano|CF|레알 마드리드
+페렌츠 푸스카스|Ferenc Puskás|CF|레알 마드리드
+에우제비우|Eusébio|ST|벤피카
+게르트 뮐러|Gerd Müller|ST|바이에른 뮌헨
+마르코 판 바스턴|Marco van Basten|ST|AC 밀란
+티에리 앙리|Thierry Henry|ST|아스널
+호나우지뉴|Ronaldinho|LW|FC 바르셀로나
+조지 베스트|George Best|RW|맨체스터 유나이티드
+가린샤|Garrincha|RW|보타포구
+호마리우|Romário|ST|FC 바르셀로나
+가브리엘 바티스투타|Gabriel Batistuta|ST|피오렌티나
+로베르토 바조|Roberto Baggio|CF|유벤투스
+알레산드로 델 피에로|Alessandro Del Piero|CF|유벤투스
+프란체스코 토티|Francesco Totti|CF|AS 로마
+즐라탄 이브라히모비치|Zlatan Ibrahimović|ST|파리 생제르맹
+웨인 루니|Wayne Rooney|ST|맨체스터 유나이티드
+앨런 시어러|Alan Shearer|ST|뉴캐슬 유나이티드
+디디에 드로그바|Didier Drogba|ST|첼시
+사뮈엘 에토오|Samuel Eto'o|ST|FC 바르셀로나
+안드리 셰우첸코|Andriy Shevchenko|ST|AC 밀란
+루이스 수아레스|Luis Suárez|ST|FC 바르셀로나
+로베르트 레반도프스키|Robert Lewandowski|ST|바이에른 뮌헨
+카림 벤제마|Karim Benzema|ST|레알 마드리드
+킬리안 음바페|Kylian Mbappé|ST|파리 생제르맹
+엘링 홀란|Erling Haaland|ST|맨체스터 시티
+해리 케인|Harry Kane|ST|토트넘 홋스퍼
+손흥민|Son Heung-min|LW|토트넘 홋스퍼
+모하메드 살라|Mohamed Salah|RW|리버풀
+네이마르|Neymar|LW|FC 바르셀로나
+가레스 베일|Gareth Bale|RW|레알 마드리드
+아르연 로번|Arjen Robben|RW|바이에른 뮌헨
+프랑크 리베리|Franck Ribéry|LW|바이에른 뮌헨
+에당 아자르|Eden Hazard|LW|첼시
+루이스 피구|Luís Figo|RW|레알 마드리드
+라울 곤살레스|Raúl González|ST|레알 마드리드
+페르난도 토레스|Fernando Torres|ST|리버풀
+다비드 비야|David Villa|ST|발렌시아
+로빈 판 페르시|Robin van Persie|ST|아스널
+뤼트 판 니스텔로이|Ruud van Nistelrooy|ST|맨체스터 유나이티드
+데니스 베르흐캄프|Dennis Bergkamp|CF|아스널
+에릭 칸토나|Eric Cantona|CF|맨체스터 유나이티드
+히바우두|Rivaldo|LW|FC 바르셀로나
+아드리아누|Adriano|ST|인터 밀란
+세르히오 아구에로|Sergio Agüero|ST|맨체스터 시티
+디에고 포를란|Diego Forlán|ST|아틀레티코 마드리드
+에딘손 카바니|Edinson Cavani|ST|파리 생제르맹
+앙투안 그리즈만|Antoine Griezmann|CF|아틀레티코 마드리드
+미로슬라프 클로제|Miroslav Klose|ST|바이에른 뮌헨
+위르겐 클린스만|Jürgen Klinsmann|ST|인터 밀란
+칼하인츠 루메니게|Karl-Heinz Rummenigge|ST|바이에른 뮌헨
+파올로 로시|Paolo Rossi|ST|유벤투스
+크리스티안 비에리|Christian Vieri|ST|인터 밀란
+필리포 인자기|Filippo Inzaghi|ST|AC 밀란
+잔프랑코 졸라|Gianfranco Zola|CF|첼시
+마이클 오언|Michael Owen|ST|리버풀
+게리 리네커|Gary Lineker|ST|토트넘 홋스퍼
+이언 러시|Ian Rush|ST|리버풀
+케니 달글리시|Kenny Dalglish|CF|리버풀
+지미 그리브스|Jimmy Greaves|ST|토트넘 홋스퍼
+흐리스토 스토이치코프|Hristo Stoichkov|LW|FC 바르셀로나
+다보르 수케르|Davor Šuker|ST|레알 마드리드
+조지 웨아|George Weah|ST|AC 밀란
+로제 밀라|Roger Milla|ST|몽펠리에
+에르난 크레스포|Hernán Crespo|ST|파르마
+마르셀로 살라스|Marcelo Salas|ST|라치오
+이반 사모라노|Iván Zamorano|ST|레알 마드리드
+우고 산체스|Hugo Sánchez|ST|레알 마드리드
+하비에르 에르난데스|Javier Hernández|ST|맨체스터 유나이티드
+카를로스 테베스|Carlos Tevez|ST|맨체스터 시티
+앙헬 디 마리아|Ángel Di María|RW|레알 마드리드
+파울로 디발라|Paulo Dybala|CF|유벤투스
+곤살로 이과인|Gonzalo Higuaín|ST|나폴리
+라우타로 마르티네스|Lautaro Martínez|ST|인터 밀란
+훌리안 알바레스|Julián Álvarez|ST|아틀레티코 마드리드
+비니시우스 주니오르|Vinícius Júnior|LW|레알 마드리드
+호드리구|Rodrygo|RW|레알 마드리드
+라민 야말|Lamine Yamal|RW|FC 바르셀로나
+부카요 사카|Bukayo Saka|RW|아스널
+필 포든|Phil Foden|RW|맨체스터 시티
+마커스 래시퍼드|Marcus Rashford|LW|맨체스터 유나이티드
+라힘 스털링|Raheem Sterling|LW|맨체스터 시티
+리야드 마레즈|Riyad Mahrez|RW|레스터 시티
+사디오 마네|Sadio Mané|LW|리버풀
+호베르투 피르미누|Roberto Firmino|CF|리버풀
+제이미 바디|Jamie Vardy|ST|레스터 시티
+피에르에메릭 오바메양|Pierre-Emerick Aubameyang|ST|보루시아 도르트문트
+마르코 로이스|Marco Reus|LW|보루시아 도르트문트
+토마스 뮐러|Thomas Müller|CF|바이에른 뮌헨
+르로이 자네|Leroy Sané|LW|맨체스터 시티
+빅터 오시멘|Victor Osimhen|ST|나폴리
+흐비차 크바라츠헬리아|Khvicha Kvaratskhelia|LW|나폴리
+하파엘 레앙|Rafael Leão|LW|AC 밀란
+치로 임모빌레|Ciro Immobile|ST|라치오
+우스만 뎀벨레|Ousmane Dembélé|RW|파리 생제르맹
+로멜루 루카쿠|Romelu Lukaku|ST|인터 밀란
+디에고 코스타|Diego Costa|ST|첼시
+페르난도 모리엔테스|Fernando Morientes|ST|레알 마드리드
+하비에르 사비올라|Javier Saviola|ST|FC 바르셀로나
+피터 크라우치|Peter Crouch|ST|리버풀
+저메인 데포|Jermain Defoe|ST|토트넘 홋스퍼
+이언 라이트|Ian Wright|ST|아스널
+앤디 콜|Andy Cole|ST|맨체스터 유나이티드
+드와이트 요크|Dwight Yorke|ST|맨체스터 유나이티드
+올레 군나르 솔셰르|Ole Gunnar Solskjær|ST|맨체스터 유나이티드
+니콜라 아넬카|Nicolas Anelka|ST|첼시
+다비드 트레제게|David Trezeguet|ST|유벤투스
+장피에르 파팽|Jean-Pierre Papin|ST|올랭피크 마르세유
+쥐스트 퐁텐|Just Fontaine|ST|스타드 드 랭스
+올리비에 지루|Olivier Giroud|ST|아스널
+다비드 지놀라|David Ginola|LW|뉴캐슬 유나이티드
+차범근|Cha Bum-kun|ST|아인트라흐트 프랑크푸르트
+황선홍|Hwang Sun-hong|ST|포항 스틸러스
+안정환|Ahn Jung-hwan|ST|페루자
+황희찬|Hwang Hee-chan|RW|울버햄튼 원더러스
+이동국|Lee Dong-gook|ST|전북 현대
+박주영|Park Chu-young|ST|AS 모나코
+알렉시스 산체스|Alexis Sánchez|LW|아스널
+라다멜 팔카오|Radamel Falcao|ST|아틀레티코 마드리드
+에마뉘엘 아데바요르|Emmanuel Adebayor|ST|아스널
+은완코 카누|Nwankwo Kanu|ST|아스널
+드리스 메르턴스|Dries Mertens|CF|나폴리
+마리오 발로텔리|Mario Balotelli|ST|맨체스터 시티
+잔루카 비알리|Gianluca Vialli|ST|삼프도리아
+로베르토 만치니|Roberto Mancini|CF|삼프도리아
+마리오 켐페스|Mario Kempes|ST|발렌시아
+알렉산데르 이사크|Alexander Isak|ST|뉴캐슬 유나이티드
+빅토르 요케레스|Viktor Gyökeres|ST|스포르팅 CP
+파트릭 클라위버르트|Patrick Kluivert|ST|FC 바르셀로나
+마르크 오버르마스|Marc Overmars|LW|아스널
+페드로 로드리게스|Pedro Rodríguez|RW|FC 바르셀로나
+호아킨 산체스|Joaquín Sánchez|RW|레알 베티스
+하칸 쉬퀴르|Hakan Şükür|ST|갈라타사라이
+헨리크 라르손|Henrik Larsson|ST|셀틱
+디미타르 베르바토프|Dimitar Berbatov|ST|맨체스터 유나이티드
+베베투|Bebeto|ST|데포르티보 라코루냐
+자이르지뉴|Jairzinho|RW|보타포구
+토스탕|Tostão|CF|크루제이루
+루디 푈러|Rudi Völler|ST|베르더 브레멘
+루카스 포돌스키|Lukas Podolski|LW|FC 쾰른
+케빈 키건|Kevin Keegan|CF|리버풀
+주세페 메아차|Giuseppe Meazza|CF|인터 밀란
+히카르두 콰레스마|Ricardo Quaresma|RW|FC 포르투
+루이스 디아스|Luis Díaz|LW|리버풀
+로렌초 인시녜|Lorenzo Insigne|LW|나폴리
+디에고 밀리토|Diego Milito|ST|인터 밀란
+엔소 프란체스콜리|Enzo Francescoli|CF|리버 플레이트
+미토마 가오루|Kaoru Mitoma|LW|브라이턴
+구보 다케후사|Takefusa Kubo|RW|레알 소시에다드
+크리스천 풀리식|Christian Pulisic|RW|AC 밀란
+마이클 올리세|Michael Olise|RW|바이에른 뮌헨
+멤피스 데파이|Memphis Depay|LW|올랭피크 리옹
+코디 각포|Cody Gakpo|LW|리버풀
+마리오 만주키치|Mario Mandžukić|ST|유벤투스
+이반 페리시치|Ivan Perišić|LW|인터 밀란
+데얀 사비체비치|Dejan Savićević|LW|AC 밀란
+프레드라그 미야토비치|Predrag Mijatović|ST|레알 마드리드
+안드레이 아르샤빈|Andrey Arshavin|LW|아스널
+에딘 제코|Edin Džeko|ST|AS 로마
+잭 그릴리시|Jack Grealish|LW|아스톤 빌라
+킹슬리 코망|Kingsley Coman|LW|바이에른 뮌헨
+가브리에우 제주스|Gabriel Jesus|ST|맨체스터 시티
+다르윈 누녜스|Darwin Núñez|ST|리버풀
+레몽 코파|Raymond Kopa|RW|레알 마드리드
+스탠리 매슈스|Stanley Matthews|RW|블랙풀
+#MF
+지네딘 지단|Zinedine Zidane|CAM|레알 마드리드
+안드레스 이니에스타|Andrés Iniesta|CM|FC 바르셀로나
+사비 에르난데스|Xavi Hernández|CM|FC 바르셀로나
+루카 모드리치|Luka Modrić|CM|레알 마드리드
+케빈 더브라위너|Kevin De Bruyne|CAM|맨체스터 시티
+안드레아 피를로|Andrea Pirlo|CM|AC 밀란
+스티븐 제라드|Steven Gerrard|CM|리버풀
+프랭크 램파드|Frank Lampard|CAM|첼시
+폴 스콜스|Paul Scholes|CM|맨체스터 유나이티드
+로이 킨|Roy Keane|CDM|맨체스터 유나이티드
+파트리크 비에이라|Patrick Vieira|CDM|아스널
+클로드 마켈렐레|Claude Makélélé|CDM|첼시
+카카|Kaká|CAM|AC 밀란
+미셸 플라티니|Michel Platini|CAM|유벤투스
+로타어 마테우스|Lothar Matthäus|CM|인터 밀란
+보비 찰턴|Bobby Charlton|CAM|맨체스터 유나이티드
+요한 네스켄스|Johan Neeskens|CM|아약스
+지쿠|Zico|CAM|플라멩구
+소크라치스|Sócrates|CAM|코린치앙스
+팔캉|Falcão|CM|AS 로마
+히벨리누|Rivellino|CAM|코린치앙스
+후안 로만 리켈메|Juan Román Riquelme|CAM|보카 주니어스
+파블로 아이마르|Pablo Aimar|CAM|발렌시아
+하비에르 마스체라노|Javier Mascherano|CDM|리버풀
+에스테반 캄비아소|Esteban Cambiasso|CM|인터 밀란
+후안 세바스티안 베론|Juan Sebastián Verón|CM|라치오
+디에고 시메오네|Diego Simeone|CM|라치오
+페르난도 레돈도|Fernando Redondo|CDM|레알 마드리드
+엔소 페르난데스|Enzo Fernández|CM|첼시
+알렉시스 맥알리스터|Alexis Mac Allister|CM|리버풀
+로드리고 데 파울|Rodrigo De Paul|CM|아틀레티코 마드리드
+세르히오 부스케츠|Sergio Busquets|CDM|FC 바르셀로나
+사비 알론소|Xabi Alonso|CM|리버풀
+세스크 파브레가스|Cesc Fàbregas|CM|아스널
+다비드 실바|David Silva|CAM|맨체스터 시티
+산티 카소를라|Santi Cazorla|CAM|아스널
+후안 마타|Juan Mata|CAM|첼시
+이스코|Isco|CAM|레알 마드리드
+코케|Koke|CM|아틀레티코 마드리드
+로드리|Rodri|CDM|맨체스터 시티
+페드리|Pedri|CM|FC 바르셀로나
+가비|Gavi|CM|FC 바르셀로나
+펩 과르디올라|Pep Guardiola|CDM|FC 바르셀로나
+루이스 엔리케|Luis Enrique|CM|FC 바르셀로나
+가이스카 멘디에타|Gaizka Mendieta|RM|발렌시아
+토니 크로스|Toni Kroos|CM|레알 마드리드
+바스티안 슈바인슈타이거|Bastian Schweinsteiger|CM|바이에른 뮌헨
+미하엘 발라크|Michael Ballack|CAM|바이에른 뮌헨
+메수트 외질|Mesut Özil|CAM|아스널
+일카이 귄도안|İlkay Gündoğan|CM|맨체스터 시티
+요주아 키미히|Joshua Kimmich|CDM|바이에른 뮌헨
+귄터 네처|Günter Netzer|CAM|보루시아 묀헨글라트바흐
+자말 무시알라|Jamal Musiala|CAM|바이에른 뮌헨
+플로리안 비르츠|Florian Wirtz|CAM|바이어 레버쿠젠
+마리오 괴체|Mario Götze|CAM|보루시아 도르트문트
+클라렌스 세이도르프|Clarence Seedorf|CM|AC 밀란
+에드가 다비즈|Edgar Davids|CDM|유벤투스
+프랑크 레이카르트|Frank Rijkaard|CDM|AC 밀란
+뤼트 휠릿|Ruud Gullit|CAM|AC 밀란
+베슬리 스네이더르|Wesley Sneijder|CAM|인터 밀란
+라파얼 판 데르 파르트|Rafael van der Vaart|CAM|토트넘 홋스퍼
+마르크 판 보멀|Mark van Bommel|CDM|바이에른 뮌헨
+나이절 더 용|Nigel de Jong|CDM|맨체스터 시티
+프렝키 더 용|Frenkie de Jong|CM|FC 바르셀로나
+디디에 데샹|Didier Deschamps|CDM|유벤투스
+에마뉘엘 프티|Emmanuel Petit|CDM|아스널
+로베르 피레스|Robert Pirès|LM|아스널
+유리 조르카에프|Youri Djorkaeff|CAM|인터 밀란
+은골로 캉테|N'Golo Kanté|CDM|첼시
+폴 포그바|Paul Pogba|CM|유벤투스
+블레즈 마튀디|Blaise Matuidi|CM|파리 생제르맹
+오렐리앵 추아메니|Aurélien Tchouaméni|CDM|레알 마드리드
+에두아르도 카마빙가|Eduardo Camavinga|CM|레알 마드리드
+젠나로 가투소|Gennaro Gattuso|CDM|AC 밀란
+다니엘레 데 로시|Daniele De Rossi|CDM|AS 로마
+클라우디오 마르키시오|Claudio Marchisio|CM|유벤투스
+마르코 베라티|Marco Verratti|CM|파리 생제르맹
+니콜로 바렐라|Nicolò Barella|CM|인터 밀란
+조르지뉴|Jorginho|CDM|첼시
+후이 코스타|Rui Costa|CAM|피오렌티나
+데쿠|Deco|CAM|FC 포르투
+브루누 페르난드스|Bruno Fernandes|CAM|맨체스터 유나이티드
+베르나르두 실바|Bernardo Silva|CM|맨체스터 시티
+비티냐|Vitinha|CM|파리 생제르맹
+데이비드 베컴|David Beckham|RM|맨체스터 유나이티드
+라이언 긱스|Ryan Giggs|LM|맨체스터 유나이티드
+폴 개스코인|Paul Gascoigne|CAM|토트넘 홋스퍼
+브라이언 롭슨|Bryan Robson|CM|맨체스터 유나이티드
+글렌 호들|Glenn Hoddle|CAM|토트넘 홋스퍼
+마이클 캐릭|Michael Carrick|CDM|맨체스터 유나이티드
+조던 헨더슨|Jordan Henderson|CM|리버풀
+데클런 라이스|Declan Rice|CDM|아스널
+주드 벨링엄|Jude Bellingham|CAM|레알 마드리드
+제임스 밀너|James Milner|CM|리버풀
+존 반스|John Barnes|LM|리버풀
+매트 르 티시에|Matt Le Tissier|CAM|사우샘프턴
+야야 투레|Yaya Touré|CM|맨체스터 시티
+마이클 에시엔|Michael Essien|CM|첼시
+제이제이 오코차|Jay-Jay Okocha|CAM|볼턴 원더러스
+토마스 파티|Thomas Partey|CDM|아틀레티코 마드리드
+파비뉴|Fabinho|CDM|리버풀
+카세미루|Casemiro|CDM|레알 마드리드
+필리피 쿠치뉴|Philippe Coutinho|CAM|리버풀
+오스카|Oscar|CAM|첼시
+하미레스|Ramires|CM|첼시
+질베르투 시우바|Gilberto Silva|CDM|아스널
+둥가|Dunga|CDM|피오렌티나
+레오나르두|Leonardo|CAM|AC 밀란
+주니뉴 페르남부카누|Juninho Pernambucano|CM|올랭피크 리옹
+브루누 기마랑이스|Bruno Guimarães|CM|뉴캐슬 유나이티드
+루카스 파케타|Lucas Paquetá|CAM|웨스트햄 유나이티드
+하메스 로드리게스|James Rodríguez|CAM|레알 마드리드
+카를로스 발데라마|Carlos Valderrama|CAM|몽펠리에
+아르투로 비달|Arturo Vidal|CM|유벤투스
+페데리코 발베르데|Federico Valverde|CM|레알 마드리드
+알바로 레코바|Álvaro Recoba|CAM|인터 밀란
+이반 라키티치|Ivan Rakitić|CM|FC 바르셀로나
+마테오 코바치치|Mateo Kovačić|CM|첼시
+즈보니미르 보반|Zvonimir Boban|CAM|AC 밀란
+마르첼로 브로조비치|Marcelo Brozović|CDM|인터 밀란
+게오르게 하지|Gheorghe Hagi|CAM|갈라타사라이
+드라간 스토이코비치|Dragan Stojković|CAM|츠르베나 즈베즈다
+데얀 스탄코비치|Dejan Stanković|CM|인터 밀란
+네마냐 마티치|Nemanja Matić|CDM|첼시
+세르게이 밀린코비치사비치|Sergej Milinković-Savić|CM|라치오
+파벨 네드베드|Pavel Nedvěd|LM|유벤투스
+토마시 로시츠키|Tomáš Rosický|CAM|아스널
+야리 리트마넨|Jari Litmanen|CAM|아약스
+미카엘 라우드루프|Michael Laudrup|CAM|FC 바르셀로나
+크리스티안 에릭센|Christian Eriksen|CAM|토트넘 홋스퍼
+마르틴 외데고르|Martin Ødegaard|CAM|아스널
+헨리흐 미키타리안|Henrikh Mkhitaryan|CAM|보루시아 도르트문트
+나카타 히데토시|Hidetoshi Nakata|CAM|AS 로마
+나카무라 슌스케|Shunsuke Nakamura|CAM|셀틱
+가가와 신지|Shinji Kagawa|CAM|보루시아 도르트문트
+혼다 게이스케|Keisuke Honda|CAM|CSKA 모스크바
+박지성|Park Ji-sung|RM|맨체스터 유나이티드
+기성용|Ki Sung-yueng|CM|스완지 시티
+이강인|Lee Kang-in|CAM|파리 생제르맹
+이청용|Lee Chung-yong|RM|볼턴 원더러스
+구자철|Koo Ja-cheol|CAM|아우크스부르크
+이재성|Lee Jae-sung|CAM|마인츠 05
+유상철|Yoo Sang-chul|CM|울산 현대
+김남일|Kim Nam-il|CDM|전남 드래곤즈
+황인범|Hwang In-beom|CM|페예노르트
+팀 케이힐|Tim Cahill|CAM|에버턴
+티아고 알칸타라|Thiago Alcântara|CM|바이에른 뮌헨
+다니 올모|Dani Olmo|CAM|RB 라이프치히
+잔니 리베라|Gianni Rivera|CAM|AC 밀란
+산드로 마촐라|Sandro Mazzola|CAM|인터 밀란
+마르코 타르델리|Marco Tardelli|CM|유벤투스
+로베르토 도나도니|Roberto Donadoni|RM|AC 밀란
+슈테판 에펜베르크|Stefan Effenberg|CM|바이에른 뮌헨
+베른트 슈스터|Bernd Schuster|CM|FC 바르셀로나
+무사 뎀벨레|Mousa Dembélé|CM|토트넘 홋스퍼
+마루안 펠라이니|Marouane Fellaini|CM|에버턴
+도미니크 소보슬라이|Dominik Szoboszlai|CAM|리버풀
+마르코스 세나|Marcos Senna|CDM|비야레알
+요안 구르퀴프|Yoann Gourcuff|CAM|지롱댕 보르도
+사미르 나스리|Samir Nasri|CAM|맨체스터 시티
+콜 파머|Cole Palmer|CAM|첼시
+라이언 흐라벤베르흐|Ryan Gravenberch|CM|리버풀
+마르틴 수비멘디|Martín Zubimendi|CDM|레알 소시에다드
+조 콜|Joe Cole|LM|첼시
+스티브 맥마나만|Steve McManaman|LM|레알 마드리드
+엔도 와타루|Wataru Endo|CDM|리버풀
+델레 알리|Dele Alli|CAM|토트넘 홋스퍼
+메이슨 마운트|Mason Mount|CAM|첼시
+아드리앵 라비오|Adrien Rabiot|CM|유벤투스
+미랄렘 퍄니치|Miralem Pjanić|CM|유벤투스
+#DF
+프란츠 베켄바워|Franz Beckenbauer|SW|바이에른 뮌헨
+파올로 말디니|Paolo Maldini|LB|AC 밀란
+프랑코 바레시|Franco Baresi|SW|AC 밀란
+세르히오 라모스|Sergio Ramos|CB|레알 마드리드
+카를레스 푸욜|Carles Puyol|CB|FC 바르셀로나
+파비오 칸나바로|Fabio Cannavaro|CB|유벤투스
+알레산드로 네스타|Alessandro Nesta|CB|AC 밀란
+버질 판 데이크|Virgil van Dijk|CB|리버풀
+존 테리|John Terry|CB|첼시
+리오 퍼디낸드|Rio Ferdinand|CB|맨체스터 유나이티드
+네마냐 비디치|Nemanja Vidić|CB|맨체스터 유나이티드
+카푸|Cafu|RB|AC 밀란
+호베르투 카를루스|Roberto Carlos|LB|레알 마드리드
+필리프 람|Philipp Lahm|RB|바이에른 뮌헨
+다니 알베스|Dani Alves|RB|FC 바르셀로나
+마르셀루|Marcelo|LB|레알 마드리드
+애슐리 콜|Ashley Cole|LB|첼시
+게리 네빌|Gary Neville|RB|맨체스터 유나이티드
+릴리앙 튀랑|Lilian Thuram|CB|유벤투스
+마르셀 드사이|Marcel Desailly|CB|AC 밀란
+로랑 블랑|Laurent Blanc|CB|올랭피크 마르세유
+비상트 리자라쥐|Bixente Lizarazu|LB|바이에른 뮌헨
+안드레아스 브레메|Andreas Brehme|LB|인터 밀란
+위르겐 콜러|Jürgen Kohler|CB|보루시아 도르트문트
+마티아스 자머|Matthias Sammer|SW|보루시아 도르트문트
+파울 브라이트너|Paul Breitner|LB|바이에른 뮌헨
+마츠 후멜스|Mats Hummels|CB|보루시아 도르트문트
+제롬 보아텡|Jérôme Boateng|CB|바이에른 뮌헨
+안토니오 뤼디거|Antonio Rüdiger|CB|레알 마드리드
+쥘 쿤데|Jules Koundé|RB|FC 바르셀로나
+테오 에르난데스|Theo Hernández|LB|AC 밀란
+바카리 사냐|Bacary Sagna|RB|아스널
+파트리스 에브라|Patrice Evra|LB|맨체스터 유나이티드
+라파엘 바란|Raphaël Varane|CB|레알 마드리드
+윌리암 살리바|William Saliba|CB|아스널
+에리크 아비달|Éric Abidal|LB|FC 바르셀로나
+제라르 피케|Gerard Piqué|CB|FC 바르셀로나
+조르디 알바|Jordi Alba|LB|FC 바르셀로나
+페르난도 이에로|Fernando Hierro|CB|레알 마드리드
+다니 카르바할|Dani Carvajal|RB|레알 마드리드
+세사르 아스필리쿠에타|César Azpilicueta|RB|첼시
+에메릭 라포르트|Aymeric Laporte|CB|맨체스터 시티
+파우 쿠바르시|Pau Cubarsí|CB|FC 바르셀로나
+조르조 키엘리니|Giorgio Chiellini|CB|유벤투스
+레오나르도 보누치|Leonardo Bonucci|CB|유벤투스
+안드레아 바르찰리|Andrea Barzagli|CB|유벤투스
+가에타노 시레아|Gaetano Scirea|SW|유벤투스
+자친토 파케티|Giacinto Facchetti|LB|인터 밀란
+클라우디오 젠틸레|Claudio Gentile|CB|유벤투스
+주세페 베르고미|Giuseppe Bergomi|CB|인터 밀란
+알레산드로 코스타쿠르타|Alessandro Costacurta|CB|AC 밀란
+잔루카 잠브로타|Gianluca Zambrotta|RB|유벤투스
+마르코 마테라치|Marco Materazzi|CB|인터 밀란
+알레산드로 바스토니|Alessandro Bastoni|CB|인터 밀란
+조반니 디 로렌초|Giovanni Di Lorenzo|RB|나폴리
+하비에르 사네티|Javier Zanetti|RB|인터 밀란
+왈테르 사무엘|Walter Samuel|CB|인터 밀란
+로베르토 아얄라|Roberto Ayala|CB|발렌시아
+다니엘 파사렐라|Daniel Passarella|CB|리버 플레이트
+니콜라스 오타멘디|Nicolás Otamendi|CB|맨체스터 시티
+리산드로 마르티네스|Lisandro Martínez|CB|맨체스터 유나이티드
+크리스티안 로메로|Cristian Romero|CB|토트넘 홋스퍼
+루시우|Lúcio|CB|인터 밀란
+치아구 시우바|Thiago Silva|CB|파리 생제르맹
+마르키뉴스|Marquinhos|CB|파리 생제르맹
+다비드 루이스|David Luiz|CB|첼시
+닐톤 산투스|Nílton Santos|LB|보타포구
+카를루스 아우베르투|Carlos Alberto Torres|RB|산투스
+마이콩|Maicon|RB|인터 밀란
+필리피 루이스|Filipe Luís|LB|아틀레티코 마드리드
+가브리에우 마갈량이스|Gabriel Magalhães|CB|아스널
+에데르 밀리탕|Éder Militão|CB|레알 마드리드
+디에고 고딘|Diego Godín|CB|아틀레티코 마드리드
+로날드 아라우호|Ronald Araújo|CB|FC 바르셀로나
+라파엘 마르케스|Rafael Márquez|CB|FC 바르셀로나
+토니 애덤스|Tony Adams|CB|아스널
+솔 캠벨|Sol Campbell|CB|아스널
+제이미 캐러거|Jamie Carragher|CB|리버풀
+보비 무어|Bobby Moore|CB|웨스트햄 유나이티드
+존 스톤스|John Stones|CB|맨체스터 시티
+카일 워커|Kyle Walker|RB|맨체스터 시티
+트렌트 알렉산더아놀드|Trent Alexander-Arnold|RB|리버풀
+앤디 로버트슨|Andrew Robertson|LB|리버풀
+스튜어트 피어스|Stuart Pearce|LB|노팅엄 포레스트
+데니스 어윈|Denis Irwin|LB|맨체스터 유나이티드
+야프 스탐|Jaap Stam|CB|맨체스터 유나이티드
+로날트 쿠만|Ronald Koeman|SW|FC 바르셀로나
+프랑크 더 부르|Frank de Boer|CB|아약스
+마테이스 더 리흐트|Matthijs de Ligt|CB|아약스
+조바니 판 브롱크호르스트|Giovanni van Bronckhorst|LB|FC 바르셀로나
+뱅상 콩파니|Vincent Kompany|CB|맨체스터 시티
+얀 페르통언|Jan Vertonghen|CB|토트넘 홋스퍼
+토비 알더르베이럴트|Toby Alderweireld|CB|토트넘 홋스퍼
+요슈코 그바르디올|Joško Gvardiol|CB|맨체스터 시티
+브라니슬라브 이바노비치|Branislav Ivanović|RB|첼시
+아슈라프 하키미|Achraf Hakimi|RB|파리 생제르맹
+칼리두 쿨리발리|Kalidou Koulibaly|CB|나폴리
+김민재|Kim Min-jae|CB|나폴리
+홍명보|Hong Myung-bo|SW|포항 스틸러스
+이영표|Lee Young-pyo|LB|토트넘 홋스퍼
+차두리|Cha Du-ri|RB|셀틱
+김영권|Kim Young-gwon|CB|광저우 에버그란데
+알폰소 데이비스|Alphonso Davies|LB|바이에른 뮌헨
+페페|Pepe|CB|레알 마드리드
+히카르두 카르발류|Ricardo Carvalho|CB|첼시
+후벵 디아스|Rúben Dias|CB|맨체스터 시티
+주앙 칸셀루|João Cancelo|RB|맨체스터 시티
+누누 멘드스|Nuno Mendes|LB|파리 생제르맹
+사미 히피아|Sami Hyypiä|CB|리버풀
+도미야스 다케히로|Takehiro Tomiyasu|RB|아스널
+#GK
+레프 야신|Lev Yashin|GK|디나모 모스크바
+잔루이지 부폰|Gianluigi Buffon|GK|유벤투스
+마누엘 노이어|Manuel Neuer|GK|바이에른 뮌헨
+이케르 카시야스|Iker Casillas|GK|레알 마드리드
+페테르 슈마이켈|Peter Schmeichel|GK|맨체스터 유나이티드
+올리버 칸|Oliver Kahn|GK|바이에른 뮌헨
+디노 조프|Dino Zoff|GK|유벤투스
+고든 뱅크스|Gordon Banks|GK|레스터 시티
+에드윈 판 데르 사르|Edwin van der Sar|GK|맨체스터 유나이티드
+티보 쿠르투아|Thibaut Courtois|GK|레알 마드리드
+알리송 베커|Alisson Becker|GK|리버풀
+에데르송|Ederson|GK|맨체스터 시티
+얀 오블라크|Jan Oblak|GK|아틀레티코 마드리드
+페트르 체흐|Petr Čech|GK|첼시
+잔루이지 돈나룸마|Gianluigi Donnarumma|GK|파리 생제르맹
+위고 요리스|Hugo Lloris|GK|토트넘 홋스퍼
+파비앵 바르테즈|Fabien Barthez|GK|AS 모나코
+마르크안드레 테어슈테겐|Marc-André ter Stegen|GK|FC 바르셀로나
+다비드 데 헤아|David de Gea|GK|맨체스터 유나이티드
+빅토르 발데스|Víctor Valdés|GK|FC 바르셀로나
+호세 루이스 칠라베르트|José Luis Chilavert|GK|벨레스 사르스필드
+르네 이기타|René Higuita|GK|아틀레티코 나시오날
+호르헤 캄포스|Jorge Campos|GK|푸마스 UNAM
+에밀리아노 마르티네스|Emiliano Martínez|GK|아스톤 빌라
+클라우지우 타파렐|Cláudio Taffarel|GK|갈라타사라이
+지다|Dida|GK|AC 밀란
+줄리우 세자르|Júlio César|GK|인터 밀란
+안도니 수비사레타|Andoni Zubizarreta|GK|FC 바르셀로나
+산티아고 카니사레스|Santiago Cañizares|GK|발렌시아
+페페 레이나|Pepe Reina|GK|리버풀
+발테르 젱가|Walter Zenga|GK|인터 밀란
+프란체스코 톨도|Francesco Toldo|GK|피오렌티나
+제프 마이어|Sepp Maier|GK|바이에른 뮌헨
+하랄트 슈마허|Harald Schumacher|GK|FC 쾰른
+옌스 레만|Jens Lehmann|GK|아스널
+데이비드 시먼|David Seaman|GK|아스널
+피터 실턴|Peter Shilton|GK|노팅엄 포레스트
+조 하트|Joe Hart|GK|맨체스터 시티
+조던 픽퍼드|Jordan Pickford|GK|에버턴
+리나트 다사예프|Rinat Dasayev|GK|스파르타크 모스크바
+야신 부누|Yassine Bounou|GK|세비야
+이운재|Lee Woon-jae|GK|수원 삼성 블루윙즈
+김병지|Kim Byung-ji|GK|울산 현대
+조현우|Jo Hyeon-woo|GK|대구 FC
+김승규|Kim Seung-gyu|GK|울산 현대
+팀 하워드|Tim Howard|GK|에버턴
+비토르 바이아|Vítor Baía|GK|FC 포르투
+사미르 한다노비치|Samir Handanović|GK|인터 밀란
+카스페르 슈마이켈|Kasper Schmeichel|GK|레스터 시티
+마이크 메냥|Mike Maignan|GK|AC 밀란`;
+
+const CATS = {FW:{ko:'공격수'},MF:{ko:'미드필더'},DF:{ko:'수비수'},GK:{ko:'골키퍼'}};
+const MODES = {
+  ALL:{ko:'전체 통합',icon:'🌍',desc:'포지션 상관없이 전원'},
+  FW:{ko:'공격수',icon:'⚡',desc:'ST · CF · LW · RW'},
+  MF:{ko:'미드필더',icon:'🎯',desc:'CAM · CM · CDM · LM · RM'},
+  DF:{ko:'수비수',icon:'🛡️',desc:'CB · SW · LB · RB'},
+  GK:{ko:'골키퍼',icon:'🧤',desc:'GK'}
+};
+const POSES=['ST','CF','LW','RW','CAM','CM','CDM','LM','RM','SW','LB','RB','CB','GK'];
+const catOf=pos=>['ST','CF','LW','RW'].includes(pos)?'FW':['CAM','CM','CDM','LM','RM'].includes(pos)?'MF':pos==='GK'?'GK':'DF';
+const BASE=[], BASE_BY={}, BYID={};
+let PLAYERS=[];
+function slug(s){return s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/ø/g,'o').replace(/ı/g,'i').replace(/ł/g,'l').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+(function(){let cat=null;RAW.trim().split('\n').forEach(l=>{l=l.trim();if(!l)return;if(l[0]==='#'){cat=l.slice(1);return}
+  const [ko,en,pos,club]=l.split('|');const id=slug(en);const p={id,ko,en,pos,club,cat};BASE.push(p);BASE_BY[id]=p;});})();
+
+/* ---- 사용자 명단 편집 (수정 / 추가 / 빼기) ---- */
+function normRoster(r){r=(r&&typeof r==='object')?r:{};return {edits:(r.edits&&typeof r.edits==='object'&&!Array.isArray(r.edits))?r.edits:{},added:Array.isArray(r.added)?r.added:[],removed:Array.isArray(r.removed)?r.removed.filter(x=>typeof x==='string'):[],t:+r.t||0}}
+let ROSTER=normRoster((()=>{try{return JSON.parse(localStorage.getItem('lwc_roster'))}catch(e){return null}})());
+function applyRoster(){
+  PLAYERS=[];for(const k in BYID)delete BYID[k];
+  const rm=new Set(ROSTER.removed);
+  const mk=(b,e)=>{const o=Object.assign({},b);if(e&&typeof e==='object'){for(const f of ['ko','en','club'])if(typeof e[f]==='string'&&e[f].trim())o[f]=e[f].trim().slice(0,60);if(POSES.includes(e.pos))o.pos=e.pos}
+    o.cat=catOf(o.pos);o.hidden=rm.has(o.id);return o};
+  BASE.forEach(b=>{const p=mk(b,ROSTER.edits[b.id]);p.base=true;p.edited=!!ROSTER.edits[b.id];PLAYERS.push(p);BYID[p.id]=p});
+  ROSTER.added.forEach(a=>{if(!a||typeof a.id!=='string'||!/^c-[a-z0-9-]{1,80}$/.test(a.id)||BYID[a.id])return;
+    const p=mk({id:a.id,ko:'',en:'',pos:'ST',club:''},a);if(!p.ko||!p.en)return;p.custom=true;PLAYERS.push(p);BYID[p.id]=p});
+}
+applyRoster();
+const active = () => PLAYERS.filter(p=>!p.hidden);
+const poolOf = m => m==='ALL'?active():active().filter(p=>p.cat===m);
+
+/* ===================== UTIL ===================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+let toastT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),2200)}
+
+/* ===================== PHOTO STORAGE ===================== */
+// 1) 로컬: IndexedDB (이 기기 브라우저)  2) 클라우드: 아티팩트 db + assets (내 계정, PC·모바일 공유)
+const Local = {db:null, photos:{}};
+const Cloud = {db:null, assets:null, uid:null, photos:{}, raw:{}, ready:false};
+function idbOpen(){return new Promise(res=>{try{const r=indexedDB.open('legend-wc',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos');r.onsuccess=()=>{Local.db=r.result;res(true)};r.onerror=()=>res(false)}catch(e){res(false)}})}
+function idbAll(){return new Promise(res=>{if(!Local.db)return res({});try{const out={};const tx=Local.db.transaction('photos','readonly');const st=tx.objectStore('photos');const rq=st.openCursor();rq.onsuccess=()=>{const c=rq.result;if(c){out[c.key]=c.value;c.continue()}else res(out)};rq.onerror=()=>res(out)}catch(e){res({})}})}
+function idbPut(k,v){return new Promise(res=>{if(!Local.db)return res(false);try{const tx=Local.db.transaction('photos','readwrite');tx.objectStore('photos').put(v,k);tx.oncomplete=()=>res(true);tx.onerror=()=>res(false)}catch(e){res(false)}})}
+function idbDel(k){return new Promise(res=>{if(!Local.db)return res(false);try{const tx=Local.db.transaction('photos','readwrite');tx.objectStore('photos').delete(k);tx.oncomplete=()=>res(true);tx.onerror=()=>res(false)}catch(e){res(false)}})}
+const Site = {photos:{}, n:0};   // 사이트에 올린 pack.json (모든 방문자 공통)
+const photoOf = id => Local.photos[id] || Cloud.photos[id] || Site.photos[id] || null;
+const photoCount = () => active().reduce((n,p)=>n+(photoOf(p.id)?1:0),0);
+const canCloudUpload = () => !!(Cloud.db && Cloud.assets);
+
+function blobToDataURL(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(b)})}
+function dataURLToBlob(d){const [h,b]=d.split(',');const mime=(h.match(/data:([^;]+)/)||[])[1]||'image/png';const bin=atob(b);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type:mime})}
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src})}
+async function processImage(file){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await loadImg(url);const w=img.naturalWidth,h=img.naturalHeight;
+    const R=3/4;let sx=0,sy=0,cw=w,ch=h;
+    if(w/h>R){cw=h*R;sx=(w-cw)/2}else{ch=w/R;sy=(h-ch)*0.18}
+    const W=360,H=480;const c=document.createElement('canvas');c.width=W;c.height=H;
+    const g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(img,sx,sy,cw,ch,0,0,W,H);
+    return await new Promise(r=>c.toBlob(r,'image/jpeg',0.86));
+  }finally{URL.revokeObjectURL(url)}
+}
+async function savePhoto(id,blob){
+  if(canCloudUpload()){
+    try{
+      const r=await Cloud.assets.upload(blob);
+      const old=Cloud.raw[id];
+      await Cloud.db.doc('photos/'+id).set({a:r.id,u:r.url||'',t:Date.now()});
+      Cloud.raw[id]={a:r.id,u:r.url||''};Cloud.photos[id]=r.url||('/_blob/'+r.id);
+      if(old&&old.a&&old.a!==r.id){Cloud.assets.delete(old.a).catch(()=>{})}
+      if(Local.photos[id]){delete Local.photos[id];idbDel(id)}
+      return 'cloud';
+    }catch(e){console.warn('cloud upload failed',e)}
+  }
+  const d=await blobToDataURL(blob);Local.photos[id]=d;await idbPut(id,d);return 'local';
+}
+async function removePhoto(id){
+  if(Local.photos[id]){delete Local.photos[id];await idbDel(id)}
+  if(Cloud.raw[id]&&Cloud.db){try{const a=Cloud.raw[id].a;await Cloud.db.doc('photos/'+id).delete();delete Cloud.raw[id];delete Cloud.photos[id];if(Cloud.assets&&a)Cloud.assets.delete(a).catch(()=>{})}catch(e){toast('클라우드 사진은 편집 권한이 있어야 지울 수 있어요')}}
+}
+
+/* ===================== RESULTS / PROGRESS ===================== */
+let R = lsGet('lwc_results',{});        // {mode:{order:[ids],date,n,size}}
+let OV = lsGet('lwc_override',{});      // 스쿼드 수동 교체 {slotKey:id}
+let PREF = lsGet('lwc_pref','pos');     // 'pos' | 'all'
+let T = null;                            // 진행 중 토너먼트
+let LAST = lsGet('lwc_last',null);      // 마지막 결과 화면용
+let saveStateT;
+function persistState(){lsSet('lwc_results',R);lsSet('lwc_override',OV);
+  if(Cloud.db&&Cloud.uid){clearTimeout(saveStateT);saveStateT=setTimeout(()=>{Cloud.db.doc('data/users/'+Cloud.uid+'/state').set({results:R,override:OV,t:Date.now()}).catch(e=>console.warn(e))},800)}}
+function validIds(a){return Array.isArray(a)&&a.every(id=>BYID[id])}
+(function restore(){const s=lsGet('lwc_progress',null);if(s&&validIds(s.cur)&&validIds(s.byes)&&validIds(s.win))T=s;})();
+
+/* ===================== CLOUD INIT ===================== */
+let syncMsg='📱 사진·기록이 이 기기 브라우저에 저장돼요';
+async function initCloud(){
+  for(let i=0;i<24&&!(window.claude&&typeof window.claude.use==='function');i++)await sleep(250);
+  if(!(window.claude&&typeof window.claude.use==='function'))return;
+  let db=null,user=null,assets=null;
+  try{[db,user,assets]=await Promise.all([claude.use('db'),claude.use('user').catch(()=>null),claude.use('assets').catch(()=>null)])}catch(e){return}
+  if(!db)return;
+  Cloud.db=db;Cloud.assets=assets||null;
+  try{Cloud.uid=user?await user.id():null}catch(e){Cloud.uid=null}
+  syncMsg = Cloud.assets ? '☁️ 사진이 내 계정에 저장돼 PC·모바일에서 함께 보여요' : '👀 공유된 사진을 보는 중 (내가 올린 사진은 이 기기에만 저장)';
+  try{
+    db.collection('photos').limit(1000).onSnapshot(snap=>{
+      const m={},raw={};snap.docs.forEach(d=>{const v=d.data();if(v&&typeof v.a==='string'&&BYID[d.id]){raw[d.id]=v;m[d.id]=(typeof v.u==='string'&&v.u)?v.u:('/_blob/'+v.a)}});
+      Cloud.photos=m;Cloud.raw=raw;Cloud.ready=true;refreshPhotos();
+    },e=>console.warn('photos sub',e));
+    let first=true;
+    db.doc('roster/main').onSnapshot(d=>{
+      const r=d.exists?normRoster(d.data()):null;
+      if(first){first=false;if(ROSTER.t&&(!r||ROSTER.t>r.t)){pushRoster();return}}
+      if(r&&r.t>ROSTER.t){ROSTER=r;lsSet('lwc_roster',ROSTER);applyRoster();rerender();if($('#modal').classList.contains('on')&&MODAL.type==='photo')renderPhotoModal()}
+    },e=>console.warn('roster sub',e));
+  }catch(e){console.warn(e)}
+  if(Cloud.uid){
+    try{const s=await db.doc('data/users/'+Cloud.uid+'/state').get();
+      if(s.exists){const v=s.data()||{};let changed=false;
+        for(const k of Object.keys(MODES)){const c=v.results&&v.results[k];if(c&&validIds(c.order)&&(!R[k]||(c.date||0)>(R[k].date||0))){R[k]=c;changed=true}}
+        if(v.override&&typeof v.override==='object'&&(v.t||0)>(lsGet('lwc_ovt',0))){OV=Object.assign({},v.override);changed=true}
+        if(changed){lsSet('lwc_results',R);lsSet('lwc_override',OV)}
+      }
+    }catch(e){console.warn(e)}
+  }
+  rerender();
+}
+
+let rosterQ=Promise.resolve();
+function pushRoster(){if(!Cloud.db)return;const data=JSON.parse(JSON.stringify(ROSTER));
+  rosterQ=rosterQ.then(()=>Cloud.db.doc('roster/main').set(data)).catch(e=>{console.warn(e);toast('명단 변경은 이 기기에만 저장됐어요')})}
+function saveRoster(){ROSTER.t=Date.now();lsSet('lwc_roster',ROSTER);applyRoster();pushRoster();rerender()}
+
+/* ===================== AVATAR ===================== */
+const SIL='<svg viewBox="0 0 100 100"><circle cx="50" cy="34" r="18" fill="#ffffff26"/><path d="M14 98c2-24 16-36 36-36s34 12 36 36z" fill="#ffffff26"/></svg>';
+function avatar(p,cls=''){
+  const src=photoOf(p.id);
+  if(src)return `<div class="ph ${p.cat} ${cls}"><img src="${esc(src)}" alt="${esc(p.ko)}" loading="lazy" decoding="async"></div>`;
+  return `<div class="ph ${p.cat} ${cls}"><div class="sil">${SIL}<span class="ini">${esc(p.pos)}</span></div></div>`;
+}
+
+/* ===================== NAV ===================== */
+let VIEW='home';
+function show(v){VIEW=v;document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));rerender();window.scrollTo(0,0)}
+function rerender(){({home:renderHome,match:renderMatch,result:renderResult,squad:renderSquad,dex:renderDex})[VIEW]()}
+function refreshPhotos(){ if(VIEW!=='match'||!animLock) rerender(); if($('#modal').classList.contains('on')&&MODAL.type==='photo')renderPhotoModal(); }
+
+/* ===================== HOME ===================== */
+const SIZES={ALL:['full',256,128,64,32,16],FW:['full',100,64,32,16],MF:['full',100,64,32,16],DF:['full',100,64,32,16],GK:['full',32,16]};
+let SZ = lsGet('lwc_sizes',{});
+const sizeList = m => SIZES[m].filter(sz=>sz==='full'||sz<poolOf(m).length);
+const sizeOf = m => sizeList(m).includes(SZ[m])?SZ[m]:'full';
+const cntOf = (m,sz) => sz==='full'?poolOf(m).length:sz;
+const matchInfo = n => {let P=1;while(P*2<=n)P*=2;return n===P?`${n-1}경기`:`예선 ${n-P}경기 → ${P}강 · 총 ${n-1}경기`};
+function renderHome(){
+  const pc=photoCount();
+  let h=`<div class="hero"><h1 class="disp">레전드 <b>월드컵</b></h1><p>역대 인기 축구선수 ${active().length}명 · 이상형 월드컵 &amp; 4-3-3 드림 스쿼드</p></div>`;
+  if(T){const pct=Math.round(T.played/T.total*100);
+    h+=`<div class="resume"><div><div style="font-weight:900">진행 중 · ${MODES[T.mode].ko} ${T.n}강</div><div class="muted" style="font-size:13px">${esc(T.label)} · ${pct}% 완료 (${T.played}/${T.total}경기)</div></div>
+    <div class="row"><button class="btn sm ghost" data-act="abandon">그만두기</button><button class="btn sm pri" data-act="resume">이어하기 ▶</button></div></div>`}
+  h+=`<div class="sec-t">모드 선택 <span style="font-weight:600;letter-spacing:0">· 탭하면 토너먼트 크기를 골라요</span></div><div class="modes">`;
+  for(const k of ['ALL','FW','MF','DF','GK']){
+    const m=MODES[k],n=poolOf(k).length,sz=sizeOf(k),cnt=cntOf(k,sz);const r=R[k];const ch=r&&BYID[r.order[0]];
+    const color=k==='ALL'?'var(--accent)':`var(--${k})`;
+    h+=`<button class="mode ${k==='ALL'?'big':''}" data-act="start" data-m="${k}"><span class="bar" style="background:${color}"></span>
+      ${ch?`<span class="done">🏆 ${esc(ch.ko)}</span>`:''}
+      <div class="n disp" style="color:${color}">${cnt}강</div><div class="t">${m.icon} ${m.ko}</div><div class="s">${m.desc} · ${n}명</div><div class="s" style="color:var(--text);margin-top:6px">${sz==='full'?'전체 출전':'랜덤 '+sz+'강'} ▸ 크기 변경</div></button>`;
+  }
+  h+=`</div><div class="tools">
+    <button class="tool" data-act="go" data-v="squad"><b>🏟️ 드림 스쿼드</b><span>토너먼트 결과로 4-3-3 자동 구성</span></button>
+    <button class="tool" data-act="go" data-v="dex"><b>📋 선수 명단·사진</b><span>사진 ${pc}/${active().length} · 명단 수정·추가</span></button></div>
+  <div class="foot">${esc(syncMsg)}<br>선수 사진은 저작권 때문에 기본 제공하지 않아요. 카드의 📷 버튼이나 ‘선수 사진 관리’에서 구글 이미지를 복사·붙여넣기 하거나 갤러리에서 골라 넣으면 바로 반영돼요.</div>`;
+  $('#v-home').innerHTML=h;
+}
+
+/* ===================== TOURNAMENT ===================== */
+function openSize(mode){
+  MODAL={type:'size'};const cur=sizeOf(mode),m=MODES[mode];if(poolOf(mode).length<2){toast('이 모드에 선수가 2명 이상 있어야 해요');return}
+  $('#sheet').innerHTML=`<div class="row" style="justify-content:space-between"><h3>${m.icon} ${m.ko} · 토너먼트 크기</h3><button class="btn sm" data-act="close">닫기</button></div>
+   <div class="cand" style="max-height:none">${sizeList(mode).map(sz=>{const n=cntOf(mode,sz);
+     return `<button class="mini" data-act="go-size" data-m="${mode}" data-v="${sz}" ${sz===cur?'style="border-color:var(--accent)"':''}>
+       <div class="disp" style="font-size:24px;min-width:84px;color:${mode==='ALL'?'var(--accent)':'var(--'+mode+')'}">${n}강</div>
+       <div><div class="k">${sz==='full'?'전체 출전 ('+n+'명 전원)':'랜덤 '+n+'명 추첨'}</div><div class="c">${matchInfo(n)}</div></div>
+       <span class="rk">${sz===cur?'최근 선택':''}</span></button>`}).join('')}</div>
+   <div class="muted" style="font-size:12px;margin-top:10px">2의 거듭제곱(16·32·64·128·256)이 아니면 예선을 먼저 치러 인원을 맞춰요.</div>`;
+  openModal();
+}
+function startTournament(mode,size){
+  if(size===undefined)size=sizeOf(mode);
+  let ids=shuffle(poolOf(mode).map(p=>p.id));
+  if(size!=='full'&&ids.length>size)ids=ids.slice(0,size);
+  T={mode,size,n:ids.length,total:ids.length-1,played:0,elim:[],hist:[]};
+  setupRound(ids);saveProgress();show('match');
+}
+function setupRound(ent){
+  const len=ent.length;let P=1;while(P*2<=len)P*=2;
+  if(len===P){T.cur=ent;T.byes=[];T.prelim=false;T.label=len===2?'결승':len===4?'준결승':len+'강'}
+  else{const m=len-P;T.cur=ent.slice(0,2*m);T.byes=ent.slice(2*m);T.prelim=true;T.label=`예선 ${len}→${P}`}
+  T.rsize=len;T.i=0;T.win=[];
+}
+function saveProgress(){if(T)lsSet('lwc_progress',T);else lsDel('lwc_progress')}
+function pick(side){
+  const a=T.cur[2*T.i],b=T.cur[2*T.i+1];
+  T.hist.push({cur:T.cur,byes:T.byes,prelim:T.prelim,label:T.label,rsize:T.rsize,i:T.i,win:T.win.slice(),played:T.played,el:T.elim.length});
+  if(T.hist.length>15)T.hist.shift();
+  const w=side?b:a,l=side?a:b;
+  T.win.push(w);T.elim.push([l,T.prelim?0:T.rsize]);T.played++;T.i++;
+  if(T.i*2>=T.cur.length){
+    const next=T.prelim?shuffle(T.win.concat(T.byes)):T.win.slice();
+    if(next.length===1){finish(next[0]);return}
+    setupRound(next);
+  }
+  saveProgress();renderMatch();
+}
+function undo(){if(!T||!T.hist.length)return;const s=T.hist.pop();Object.assign(T,{cur:s.cur,byes:s.byes,prelim:s.prelim,label:s.label,rsize:s.rsize,i:s.i,win:s.win,played:s.played});T.elim.length=s.el;saveProgress();renderMatch()}
+function finish(champ){
+  const order=[champ,...T.elim.map(e=>e[0]).reverse()];
+  R[T.mode]={order,date:Date.now(),n:T.n,size:T.size};
+  LAST={mode:T.mode,n:T.n,champ,elim:T.elim.slice(-15)};lsSet('lwc_last',LAST);
+  T=null;saveProgress();persistState();show('result');
+}
+let animLock=false;
+function cardHTML(p,side){
+  return `<button class="pc" data-act="pick" data-side="${side}">
+    <span class="posb pos ${p.cat}">${esc(p.pos)}</span>
+    <span class="cam" data-act="photo" data-id="${p.id}" title="사진 넣기">📷</span>
+    ${avatar(p)}
+    <div class="info"><div class="ko">${esc(p.ko)}</div><div class="en">${esc(p.en)}</div><div class="club">${esc(p.club)}</div></div></button>`;
+}
+function renderMatch(){
+  if(!T){show('home');return}
+  const a=BYID[T.cur[2*T.i]],b=BYID[T.cur[2*T.i+1]];
+  const nm=T.cur.length/2;
+  $('#v-match').innerHTML=`
+  <div class="mhead"><button class="btn sm" data-act="home">✕</button>
+    <div class="ttl"><div class="r disp">${esc(T.label)}</div><div class="m">${MODES[T.mode].ko} ${T.n}강 · ${T.i+1} / ${nm}</div></div>
+    <button class="btn sm" data-act="undo" ${T.hist.length?'':'disabled style="opacity:.35"'}>↶</button></div>
+  <div class="prog"><i style="width:${T.played/T.total*100}%"></i></div>
+  <div class="pcount"><span>전체 진행 ${T.played} / ${T.total}</span><span>${Math.round(T.played/T.total*100)}%</span></div>
+  <div class="duel">${cardHTML(a,0)}<div class="vs disp">VS</div>${cardHTML(b,1)}</div>
+  <div class="mfoot muted" style="font-size:12px">카드를 탭해서 선택 · PC는 ← → 키, 되돌리기 Z</div>`;
+}
+async function choose(side){
+  if(animLock||!T)return;animLock=true;
+  const cards=document.querySelectorAll('#v-match .pc');
+  cards.forEach((c,i)=>c.classList.add(i===side?'win':'lose'));
+  await sleep(260);animLock=false;pick(side);
+}
+
+/* ===================== RESULT ===================== */
+function renderResult(){
+  if(!LAST||!BYID[LAST.champ]){show('home');return}
+  const c=BYID[LAST.champ];
+  const group=rs=>LAST.elim.filter(e=>e[1]===rs).map(e=>BYID[e[0]]).filter(Boolean).reverse();
+  const ru=group(2),sf=group(4),qf=group(8);
+  const mini=(p,tag)=>`<button class="mini" data-act="photo" data-id="${p.id}">${avatar(p)}<div><div class="k">${esc(p.ko)}</div><div class="c">${esc(p.pos)} · ${esc(p.club)}</div></div><span class="rk">${tag}</span></button>`;
+  $('#v-result').innerHTML=`
+   <div class="mhead"><button class="btn sm" data-act="home">✕</button><div class="ttl"><div class="m">${MODES[LAST.mode].ko} ${LAST.n}강 결과</div></div><span style="width:40px"></span></div>
+   <div class="champ"><div class="crown">🏆</div><div class="disp" style="font-size:26px;margin-bottom:10px">나의 최애 ${MODES[LAST.mode].ko==='전체 통합'?'선수':MODES[LAST.mode].ko}</div>
+     <div class="pc" style="pointer-events:none">${avatar(c)}<span class="posb pos ${c.cat}">${esc(c.pos)}</span>
+       <div class="info"><div class="ko">${esc(c.ko)}</div><div class="en">${esc(c.en)}</div><div class="club">${esc(c.club)}</div></div></div></div>
+   ${ru.length?`<div class="sec-t">준우승</div><div class="rlist">${ru.map(p=>mini(p,'2위')).join('')}</div>`:''}
+   ${sf.length?`<div class="sec-t">4강</div><div class="rlist">${sf.map(p=>mini(p,'4강')).join('')}</div>`:''}
+   ${qf.length?`<div class="sec-t">8강</div><div class="rlist">${qf.map(p=>mini(p,'8강')).join('')}</div>`:''}
+   <div class="row" style="margin-top:20px;justify-content:center">
+     <button class="btn" data-act="copyres">📋 결과 복사</button>
+     <button class="btn" data-act="start" data-m="${LAST.mode}">🔁 다시 하기</button>
+     <button class="btn pri" data-act="go" data-v="squad">🏟️ 드림 스쿼드 보기</button></div>`;
+}
+
+/* ===================== SQUAD (4-3-3) ===================== */
+const SLOTS=[
+ {k:'LW',lb:'LW',cat:'FW',x:17,y:17,pri:['LW'],sec:['LM','CF','RW','ST']},
+ {k:'ST',lb:'ST',cat:'FW',x:50,y:11,pri:['ST','CF'],sec:['LW','RW','CAM']},
+ {k:'RW',lb:'RW',cat:'FW',x:83,y:17,pri:['RW'],sec:['RM','CF','LW','ST']},
+ {k:'LCM',lb:'CM',cat:'MF',x:24,y:41,pri:['CM','CAM'],sec:['LM','RM','CDM']},
+ {k:'CDM',lb:'CDM',cat:'MF',x:50,y:51,pri:['CDM'],sec:['CM','SW','CB']},
+ {k:'RCM',lb:'CM',cat:'MF',x:76,y:41,pri:['CM','CAM'],sec:['RM','LM','CDM']},
+ {k:'LB',lb:'LB',cat:'DF',x:13,y:65,pri:['LB'],sec:['RB','LM']},
+ {k:'LCB',lb:'CB',cat:'DF',x:36,y:71,pri:['CB','SW'],sec:['CDM','LB','RB']},
+ {k:'RCB',lb:'CB',cat:'DF',x:64,y:71,pri:['CB','SW'],sec:['CDM','RB','LB']},
+ {k:'RB',lb:'RB',cat:'DF',x:87,y:65,pri:['RB'],sec:['LB','RM']},
+ {k:'GK',lb:'GK',cat:'GK',x:50,y:89,pri:['GK'],sec:[]}
+];
+function candidates(slot){
+  const keys = PREF==='pos' ? [slot.cat,'ALL','FW','MF','DF','GK'] : ['ALL',slot.cat,'FW','MF','DF','GK'];
+  const seen=new Set(),out=[];
+  for(const k of keys){const r=R[k];if(!r||seen.has('m'+k))continue;seen.add('m'+k);
+    r.order.forEach((id,i)=>{if(!seen.has(id)&&BYID[id]&&!BYID[id].hidden){seen.add(id);out.push({id,src:k,rank:i+1})}})}
+  return out;
+}
+function buildSquad(){
+  const used=new Set(),out={};
+  for(const s of SLOTS){const id=OV[s.k];if(id&&BYID[id]&&!BYID[id].hidden&&!used.has(id)){out[s.k]={id,src:'manual'};used.add(id)}}
+  for(const pass of ['pri','sec'])for(const s of SLOTS){if(out[s.k])continue;
+    const c=candidates(s).find(c=>!used.has(c.id)&&s[pass].includes(BYID[c.id].pos));
+    if(c){out[s.k]=c;used.add(c.id)}}
+  return out;
+}
+const shortName=p=>p.ko.includes(' ')?p.ko.split(' ').pop():p.ko;
+const srcLabel=c=>c.src==='manual'?'직접 선택':`${MODES[c.src].ko} ${c.rank}위`;
+function renderSquad(){
+  const sq=buildSquad();const champ=R.ALL&&R.ALL.order[0];
+  const lines=`<svg class="lines" viewBox="0 0 300 400" preserveAspectRatio="none" fill="none" stroke="#ffffff55" stroke-width="2">
+    <rect x="10" y="10" width="280" height="380" rx="4"/><line x1="10" y1="200" x2="290" y2="200"/><circle cx="150" cy="200" r="38"/>
+    <rect x="80" y="10" width="140" height="56"/><rect x="115" y="10" width="70" height="20"/><rect x="80" y="334" width="140" height="56"/><rect x="115" y="370" width="70" height="20"/></svg>`;
+  let slots='';
+  for(const s of SLOTS){const c=sq[s.k];
+    if(c){const p=BYID[c.id];
+      slots+=`<button class="slot" style="left:${s.x}%;top:${s.y}%" data-act="slot" data-k="${s.k}">${c.id===champ?'<span class="star">⭐</span>':''}<div class="av">${avatar(p)}</div><div class="nm">${esc(shortName(p))}</div><div class="sp">${s.lb}${p.pos!==s.lb?' ('+esc(p.pos)+')':''}</div></button>`}
+    else slots+=`<button class="slot empty" style="left:${s.x}%;top:${s.y}%" data-act="slot" data-k="${s.k}"><div class="av">?</div><div class="nm">${s.lb}</div></button>`}
+  const filled=Object.keys(sq).length;
+  const modeChips=['ALL','FW','MF','DF','GK'].map(k=>`<button class="chip ${R[k]?'on':''}" data-act="start" data-m="${k}">${R[k]?'✓':'▶'} ${MODES[k].ko}</button>`).join('');
+  const list=SLOTS.filter(s=>sq[s.k]).map(s=>{const c=sq[s.k],p=BYID[c.id];return `<button class="mini" data-act="slot" data-k="${s.k}"><span class="pos ${p.cat}" style="min-width:38px;text-align:center">${s.lb}</span>${avatar(p)}<div><div class="k">${esc(p.ko)}</div><div class="c">${esc(p.pos)} · ${esc(p.club)}</div></div><span class="rk">${srcLabel(c)}</span></button>`}).join('');
+  $('#v-squad').innerHTML=`
+  <div class="mhead"><button class="btn sm" data-act="home">✕</button><div class="ttl"><div class="r disp">드림 스쿼드</div><div class="m">4-3-3 · ${filled}/11 구성</div></div><button class="btn sm" data-act="copysq">📋</button></div>
+  <div class="row" style="justify-content:center;margin-top:10px">
+    <button class="chip ${PREF==='pos'?'on':''}" data-act="pref" data-v="pos">포지션별 결과 우선</button>
+    <button class="chip ${PREF==='all'?'on':''}" data-act="pref" data-v="all">통합 결과 우선</button></div>
+  <div class="pitch">${lines}${slots}</div>
+  ${filled<11?`<div class="muted" style="text-align:center;font-size:13px;margin-top:10px">빈 자리(?)는 해당 포지션 토너먼트를 하거나, 탭해서 직접 고를 수 있어요.</div>`:''}
+  <div class="sec-t" style="text-align:center">토너먼트 기록 (탭하면 새로 시작)</div><div class="srcs">${modeChips}</div>
+  <div class="slist">${list}</div>
+  ${Object.keys(OV).length?`<div style="text-align:center;margin-top:14px"><button class="btn sm ghost" data-act="resetov">↺ 직접 교체한 선수 모두 자동으로 되돌리기</button></div>`:''}`;
+}
+function squadText(){const sq=buildSquad();const L=k=>{const c=sq[k];return c?BYID[c.id].ko:'?'};
+  return `⚽ 나의 드림 스쿼드 (4-3-3)\n\n${L('LW')} - ${L('ST')} - ${L('RW')}\n${L('LCM')} - ${L('CDM')} - ${L('RCM')}\n${L('LB')} - ${L('LCB')} - ${L('RCB')} - ${L('RB')}\n${L('GK')}\n\n#레전드월드컵`}
+
+/* ===================== DEX ===================== */
+let DX={q:'',cat:'ALL',missing:false,limit:60};
+function dexList(){const q=DX.q.trim().toLowerCase();
+  return PLAYERS.filter(p=>(DX.cat==='DEL'?p.hidden:(!p.hidden&&(DX.cat==='ALL'||p.cat===DX.cat)))&&(!DX.missing||!photoOf(p.id))&&(!q||p.ko.toLowerCase().includes(q)||p.en.toLowerCase().includes(q)||slug(p.en).includes(slug(q))||p.club.toLowerCase().includes(q)))}
+function renderDex(){
+  const list=dexList();const pc=photoCount();
+  const head=document.getElementById('dexhead');
+  const grid=list.slice(0,DX.limit).map(p=>`<button class="dc" data-act="photo" data-id="${p.id}" data-ctx="dex">${avatar(p)}<span class="posb pos ${p.cat}">${esc(p.pos)}</span>${photoOf(p.id)?'<span class="ok">✓</span>':''}<div class="k">${esc(p.ko)}${p.custom?' <span style="color:var(--accent)">＋</span>':p.edited?' <span style="color:var(--accent)">✎</span>':''}</div><div class="c">${esc(p.club)}</div></button>`).join('');
+  const body=`<div class="muted" style="font-size:12px;margin-top:10px">${list.length}명 · 사진 등록 ${pc}/${active().length} · ${esc(syncMsg)}</div>
+    <div class="dgrid">${grid}</div>${list.length>DX.limit?`<div style="text-align:center;margin-top:14px"><button class="btn" data-act="more">더 보기 (${list.length-DX.limit}명 남음)</button></div>`:''}
+    <div class="step" style="margin-top:22px"><div class="h">📦 사진·명단 파일</div>
+      <div class="row"><button class="btn sm" data-act="exportpack">내보내기 (pack.json)</button><button class="btn sm" data-act="importpack">가져오기</button></div>
+      <p>지금 보이는 사진과 명단을 파일 하나로 저장해요. 웹사이트에 이 파일을 올리면 모든 방문자에게 같은 사진·명단이 보이고, 다른 기기로 옮길 때도 쓸 수 있어요.</p></div>
+    ${(ROSTER.removed.length||ROSTER.added.length||Object.keys(ROSTER.edits).length)?`<div style="text-align:center;margin-top:22px"><button class="btn sm ghost danger" data-act="resetroster">↺ 명단을 처음 상태(기본 500명)로 되돌리기</button></div>`:''}`;
+  if(head){document.getElementById('dexbody').innerHTML=body;
+    head.querySelectorAll('[data-act="dcat"]').forEach(b=>b.classList.toggle('on',b.dataset.v===DX.cat));
+    head.querySelector('[data-act="dmiss"]').classList.toggle('on',DX.missing);
+    const del=head.querySelector('[data-v="DEL"]');del.textContent=`빠진 선수 ${ROSTER.removed.length}`;del.classList.toggle('on',DX.cat==='DEL');return}
+  $('#v-dex').innerHTML=`<div class="mhead"><button class="btn sm" data-act="home">✕</button><div class="ttl"><div class="r disp">선수 명단·사진</div><div class="m">탭해서 사진 넣기 · ✏️ 정보 수정</div></div><button class="btn sm pri" data-act="addp">＋ 추가</button></div>
+  <div class="dexbar" id="dexhead" style="margin-top:10px"><input class="search" id="dq" placeholder="이름·영문·클럽 검색" value="${esc(DX.q)}" autocomplete="off">
+   <div class="row" style="margin-top:8px">${['ALL','FW','MF','DF','GK'].map(k=>`<button class="chip ${DX.cat===k?'on':''}" data-act="dcat" data-v="${k}">${k==='ALL'?'전체':CATS[k].ko}</button>`).join('')}
+   <button class="chip ${DX.missing?'on':''}" data-act="dmiss">사진 없는 선수만</button>
+   <button class="chip ${DX.cat==='DEL'?'on':''}" data-act="dcat" data-v="DEL">빠진 선수 ${ROSTER.removed.length}</button></div></div><div id="dexbody">${body}</div>`;
+  $('#dq').addEventListener('input',e=>{DX.q=e.target.value;DX.limit=60;renderDex()});
+}
+
+/* ===================== MODAL ===================== */
+let MODAL={type:null};
+function openModal(){$('#modal').classList.add('on');document.body.style.overflow='hidden'}
+function closeModal(){$('#modal').classList.remove('on');document.body.style.overflow='';MODAL={type:null};rerender()}
+function openPhoto(id,ctx){MODAL={type:'photo',id,ctx};renderPhotoModal();openModal()}
+function renderPhotoModal(){
+  const p=BYID[MODAL.id];if(!p)return;const has=!!photoOf(p.id);
+  const gq=encodeURIComponent(p.en+' football'),nq=encodeURIComponent(p.ko+' 축구');
+  const next=MODAL.ctx==='dex'?nextMissing(p.id):null;
+  $('#sheet').innerHTML=`
+   <div class="row" style="justify-content:space-between"><h3>선수 카드</h3><div class="row"><button class="btn sm" data-act="editp" data-id="${p.id}">✏️ 정보 수정</button><button class="btn sm" data-act="close">닫기</button></div></div>
+   ${p.hidden?`<div class="step" style="border-color:#7a4a1f">명단에서 빠진 선수예요. 토너먼트에 나오지 않아요. <button class="btn sm" style="margin-left:6px" data-act="restorep" data-id="${p.id}">명단에 복원</button></div>`:''}
+   <div class="ped">${avatar(p)}<div><div style="font-size:20px;font-weight:900;word-break:keep-all">${esc(p.ko)}</div><div class="muted" style="font-size:13px">${esc(p.en)}</div>
+     <div style="margin-top:8px"><span class="pos ${p.cat}">${esc(p.pos)}</span> <span style="font-size:13px">${esc(p.club)}</span></div>
+     ${has?`<button class="btn sm danger" style="margin-top:10px" data-act="delphoto">사진 삭제</button>`:''}</div></div>
+   <div class="step"><div class="h"><i>1</i>이미지 검색 열기</div>
+     <div class="row"><a class="btn sm" href="https://www.google.com/search?tbm=isch&q=${gq}" target="_blank" rel="noopener">🔎 구글 이미지</a>
+     <a class="btn sm" href="https://search.naver.com/search.naver?where=image&query=${nq}" target="_blank" rel="noopener">🟢 네이버 이미지</a></div>
+     <p>마음에 드는 사진을 크게 연 뒤 <b>길게 눌러 ‘이미지 복사’</b> (PC는 우클릭 → 이미지 복사) 하거나, <b>‘이미지 저장’</b>해 두세요.</p></div>
+   <div class="step"><div class="h"><i>2</i>복사한 사진 붙여넣기</div>
+     <div class="paste" id="paste" contenteditable="true" inputmode="none" spellcheck="false"><div>여기를 길게 눌러 <b>붙여넣기</b></div><div style="font-size:12px;margin-top:4px">PC: 클릭 후 Ctrl/⌘ + V · 이미지 파일을 끌어다 놓아도 돼요</div></div></div>
+   <div class="step"><div class="h"><i>2</i>또는 저장한 사진 고르기</div>
+     <button class="btn pri" style="width:100%" data-act="pickfile">🖼️ 갤러리 / 파일에서 선택</button>
+     <p>사진은 자동으로 3:4 비율로 잘리고 용량이 줄어들어 저장돼요.</p></div>
+   ${next?`<div style="margin-top:14px;text-align:right"><button class="btn" data-act="photo" data-id="${next}" data-ctx="dex">다음: ${esc(BYID[next].ko)} ▶</button></div>`:''}`;
+  const z=$('#paste');
+  z.addEventListener('paste',onPaste);z.addEventListener('drop',onDrop);z.addEventListener('dragover',e=>e.preventDefault());
+  z.addEventListener('input',onPasteInput);
+}
+function openEdit(id){MODAL={type:'edit',id:id||null};renderEdit();openModal()}
+function renderEdit(){
+  const p=MODAL.id?BYID[MODAL.id]:null,b=p&&p.base?BASE_BY[p.id]:null;
+  const v=p||{ko:'',en:'',pos:'ST',club:''};
+  const grp=[['공격수',['ST','CF','LW','RW']],['미드필더',['CAM','CM','CDM','LM','RM']],['수비수',['CB','SW','LB','RB']],['골키퍼',['GK']]];
+  $('#sheet').innerHTML=`<div class="row" style="justify-content:space-between"><h3>${p?'선수 정보 수정':'새 선수 추가'}</h3><button class="btn sm" data-act="close">닫기</button></div>
+   <form id="ef" style="display:grid;gap:10px;margin-top:14px">
+    <label class="muted" style="font-size:12px">한글 이름<input class="search" id="e-ko" maxlength="40" value="${esc(v.ko)}" placeholder="예: 손흥민" style="margin-top:4px"></label>
+    <label class="muted" style="font-size:12px">영문 이름<input class="search" id="e-en" maxlength="60" value="${esc(v.en)}" placeholder="예: Son Heung-min" style="margin-top:4px" autocapitalize="words"></label>
+    <label class="muted" style="font-size:12px">포지션<select class="search" id="e-pos" style="margin-top:4px">${grp.map(([g,ps])=>`<optgroup label="${g}">${ps.map(x=>`<option ${x===v.pos?'selected':''}>${x}</option>`).join('')}</optgroup>`).join('')}</select></label>
+    <label class="muted" style="font-size:12px">주요 클럽 (전성기)<input class="search" id="e-club" maxlength="40" value="${esc(v.club)}" placeholder="예: 토트넘 홋스퍼" style="margin-top:4px"></label>
+    ${b&&p.edited?`<div class="muted" style="font-size:12px">기본값: ${esc(b.ko)} · ${esc(b.en)} · ${b.pos} · ${esc(b.club)}</div>`:''}
+    <button class="btn pri" type="submit">${p?'저장':'명단에 추가'}</button>
+   </form>
+   ${p?`<div class="row" style="margin-top:14px;justify-content:space-between">
+     ${p.edited?`<button class="btn sm" data-act="revertp" data-id="${p.id}">↺ 기본 정보로</button>`:'<span></span>'}
+     ${p.hidden?`<button class="btn sm" data-act="restorep" data-id="${p.id}">명단에 복원</button>`:`<button class="btn sm danger" data-act="removep" data-id="${p.id}">${p.custom?'선수 삭제':'명단에서 빼기'}</button>`}</div>
+     <p class="muted" style="font-size:12px;line-height:1.5">포지션을 바꾸면 해당 포지션 모드로 옮겨져요. ‘명단에서 빼기’한 선수는 ‘빠진 선수’에서 언제든 복원할 수 있어요.</p>`:''}`;
+  $('#ef').addEventListener('submit',e=>{e.preventDefault();
+    const f={ko:$('#e-ko').value.trim(),en:$('#e-en').value.trim(),pos:$('#e-pos').value,club:$('#e-club').value.trim()};
+    if(!f.ko||!f.en){toast('한글·영문 이름을 입력해 주세요');return}
+    if(!POSES.includes(f.pos))return;
+    let id=MODAL.id;
+    if(!p){id='c-'+((slug(f.en)||'p').slice(0,40))+'-'+Date.now().toString(36);ROSTER.added.push({id,...f})}
+    else if(p.custom){const a=ROSTER.added.find(x=>x.id===id);if(a)Object.assign(a,f)}
+    else{const same=b.ko===f.ko&&b.en===f.en&&b.pos===f.pos&&b.club===(f.club||b.club);if(same)delete ROSTER.edits[id];else ROSTER.edits[id]=f}
+    saveRoster();toast(p?'수정했어요':'추가했어요 — 사진도 넣어보세요');openPhoto(id,'dex');
+  });
+}
+function nextMissing(cur){const list=dexList();const i=list.findIndex(p=>p.id===cur);for(let j=i+1;j<list.length;j++)if(!photoOf(list[j].id))return list[j].id;return null}
+async function acceptFile(file){
+  if(!file||!/^image\//.test(file.type||'image/')){toast('이미지 파일이 아니에요');return}
+  const id=MODAL.id;if(!id)return;$('#sheet').classList.add('busy');
+  try{const blob=await processImage(file);const where=await savePhoto(id,blob);
+    toast(where==='cloud'?'저장 완료 ☁️ (PC·모바일 공유)':'저장 완료 (이 기기)');}
+  catch(e){console.warn(e);toast('이 이미지는 불러올 수 없어요. 저장 후 갤러리에서 골라주세요')}
+  $('#sheet').classList.remove('busy');renderPhotoModal();rerender();
+}
+function onPaste(e){
+  const items=(e.clipboardData&&e.clipboardData.items)||[];
+  for(const it of items){if(it.kind==='file'&&it.type.startsWith('image/')){e.preventDefault();acceptFile(it.getAsFile());return}}
+  const files=(e.clipboardData&&e.clipboardData.files)||[];
+  if(files.length&&files[0].type.startsWith('image/')){e.preventDefault();acceptFile(files[0]);return}
+  // 이미지 대신 HTML/텍스트가 붙은 경우: input 이벤트에서 처리
+}
+function onDrop(e){e.preventDefault();const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];if(f)acceptFile(f);else toast('웹 이미지는 끌어다 놓을 수 없어요. 복사 후 붙여넣기 해주세요')}
+function onPasteInput(){
+  const z=$('#paste');if(!z)return;const img=z.querySelector('img');
+  if(img&&img.src&&img.src.startsWith('data:image')){const b=dataURLToBlob(img.src);acceptFile(new File([b],'paste',{type:b.type}));return}
+  if(img&&img.src&&img.src.startsWith('blob:')){fetch(img.src).then(r=>r.blob()).then(b=>acceptFile(new File([b],'paste',{type:b.type||'image/png'}))).catch(()=>toast('이미지를 읽지 못했어요. 저장 후 갤러리에서 골라주세요'));return}
+  toast(img?'웹 주소 이미지는 직접 불러올 수 없어요. ‘이미지 복사’ 또는 ‘저장 → 갤러리 선택’을 써주세요':'이미지가 아니라 글자가 붙여넣어졌어요. ‘이미지 복사’로 다시 시도해 주세요');
+  renderPhotoModal();
+}
+$('#file').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)acceptFile(f)});
+
+function openSlot(k){MODAL={type:'slot',k,q:''};renderSlotModal();openModal()}
+function renderSlotModal(){
+  const s=SLOTS.find(x=>x.k===MODAL.k);const sq=buildSquad();const cur=sq[s.k];
+  const usedElse=new Set(Object.entries(sq).filter(([k])=>k!==s.k).map(([,c])=>c.id));
+  const ranked=candidates(s).filter(c=>s.pri.concat(s.sec).includes(BYID[c.id].pos));
+  const rankedIds=new Set(ranked.map(c=>c.id));
+  const rest=active().filter(p=>s.pri.includes(p.pos)&&!rankedIds.has(p.id)).map(p=>({id:p.id,src:null}));
+  const q=(MODAL.q||'').trim().toLowerCase();
+  const all=ranked.concat(rest).filter(c=>{const p=BYID[c.id];return !q||p.ko.toLowerCase().includes(q)||p.en.toLowerCase().includes(q)}).slice(0,80);
+  const row=c=>{const p=BYID[c.id];const tag=c.src?`${MODES[c.src].ko} ${c.rank}위`:'';const inUse=usedElse.has(c.id);
+    return `<button class="mini" data-act="setslot" data-id="${c.id}" ${cur&&cur.id===c.id?'style="border-color:var(--accent)"':''}>${avatar(p)}<div><div class="k">${esc(p.ko)}${inUse?' <span class="muted" style="font-size:11px">(다른 자리)</span>':''}</div><div class="c">${esc(p.pos)} · ${esc(p.club)}</div></div><span class="rk">${tag}</span></button>`};
+  $('#sheet').innerHTML=`<div class="row" style="justify-content:space-between"><h3>${s.lb} 자리 선수 선택</h3><button class="btn sm" data-act="close">닫기</button></div>
+   <div class="row" style="margin-top:10px">${cur?`<button class="btn sm" data-act="photo" data-id="${cur.id}">📷 ${esc(BYID[cur.id].ko)} 사진</button>`:''}${OV[s.k]?`<button class="btn sm" data-act="autoslot">↺ 자동 선택으로</button>`:''}</div>
+   <input class="search" id="sq" style="margin-top:10px" placeholder="이름 검색" value="${esc(MODAL.q||'')}" autocomplete="off">
+   <div class="muted" style="font-size:12px;margin-top:8px">토너먼트 순위가 높은 선수부터 보여요</div>
+   <div class="cand">${all.map(row).join('')||'<div class="muted">해당 선수가 없어요</div>'}</div>`;
+  const inp=$('#sq');inp.addEventListener('input',e=>{MODAL.q=e.target.value;const pos=e.target.selectionStart;renderSlotModal();const n=$('#sq');n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}});
+}
+function setOverride(k,id){
+  for(const [kk,v] of Object.entries(OV))if(v===id&&kk!==k)delete OV[kk];
+  if(id)OV[k]=id;else delete OV[k];lsSet('lwc_ovt',Date.now());persistState();
+}
+function confirmBox(msg,yesLabel,onYes){MODAL={type:'confirm'};$('#sheet').innerHTML=`<h3 style="font-size:17px;line-height:1.5">${msg}</h3><div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn" data-act="close">취소</button><button class="btn pri" id="cyes">${yesLabel}</button></div>`;openModal();$('#cyes').onclick=()=>{closeModal();onYes()}}
+async function copyText(t){try{await navigator.clipboard.writeText(t);toast('복사했어요')}catch(e){MODAL={type:'copy'};$('#sheet').innerHTML=`<div class="row" style="justify-content:space-between"><h3>복사하기</h3><button class="btn sm" data-act="close">닫기</button></div><textarea class="search" style="height:220px;margin-top:10px" readonly>${esc(t)}</textarea>`;openModal()}}
+
+/* ===================== EVENTS ===================== */
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;const a=el.dataset.act;
+  if(a==='photo'){e.stopPropagation();e.preventDefault();openPhoto(el.dataset.id,el.dataset.ctx||'');return}
+  switch(a){
+    case 'pick':choose(+el.dataset.side);break;
+    case 'start':openSize(el.dataset.m);break;
+    case 'go-size':{const m=el.dataset.m,sz=el.dataset.v==='full'?'full':+el.dataset.v;SZ[m]=sz;lsSet('lwc_sizes',SZ);
+      $('#modal').classList.remove('on');document.body.style.overflow='';MODAL={type:null};
+      if(T){confirmBox(`진행 중인 ${MODES[T.mode].ko} ${T.n}강 토너먼트가 있어요.<br>새로 시작할까요?`,'새로 시작',()=>startTournament(m,sz))}else startTournament(m,sz);break}
+    case 'resume':show('match');break;
+    case 'abandon':confirmBox('진행 중인 토너먼트를 그만둘까요?','그만두기',()=>{T=null;saveProgress();renderHome()});break;
+    case 'home':show('home');break;
+    case 'go':show(el.dataset.v);break;
+    case 'undo':undo();break;
+    case 'pref':PREF=el.dataset.v;lsSet('lwc_pref',PREF);renderSquad();break;
+    case 'slot':openSlot(el.dataset.k);break;
+    case 'setslot':setOverride(MODAL.k,el.dataset.id);closeModal();break;
+    case 'autoslot':setOverride(MODAL.k,null);closeModal();break;
+    case 'resetov':OV={};lsSet('lwc_ovt',Date.now());persistState();renderSquad();break;
+    case 'copysq':copyText(squadText());break;
+    case 'copyres':{const c=BYID[LAST.champ];const g=rs=>LAST.elim.filter(x=>x[1]===rs).map(x=>BYID[x[0]].ko).reverse();
+      copyText(`🏆 나의 ${MODES[LAST.mode].ko} ${LAST.n}강 우승: ${c.ko} (${c.club})\n🥈 준우승: ${g(2).join(', ')}\n4강: ${g(4).join(', ')}\n#레전드월드컵`);break}
+    case 'exportpack':exportPack(el);break;
+    case 'importpack':$('#packfile').click();break;
+    case 'addp':openEdit(null);break;
+    case 'editp':openEdit(el.dataset.id);break;
+    case 'revertp':delete ROSTER.edits[el.dataset.id];saveRoster();toast('기본 정보로 되돌렸어요');openPhoto(el.dataset.id,'dex');break;
+    case 'restorep':ROSTER.removed=ROSTER.removed.filter(x=>x!==el.dataset.id);saveRoster();toast('명단에 복원했어요');openPhoto(el.dataset.id,'dex');break;
+    case 'removep':{const id=el.dataset.id,p=BYID[id];confirmBox(`${esc(p.ko)} 선수를 ${p.custom?'삭제':'명단에서 뺄'}까요?`,p.custom?'삭제':'빼기',()=>{
+      if(p.custom){ROSTER.added=ROSTER.added.filter(x=>x.id!==id);for(const k in OV)if(OV[k]===id)delete OV[k]}
+      else if(!ROSTER.removed.includes(id))ROSTER.removed.push(id);saveRoster();toast('반영했어요')});break}
+    case 'resetroster':confirmBox('수정·추가·제외한 내용을 모두 지우고 기본 500명 명단으로 되돌릴까요?','되돌리기',()=>{ROSTER={edits:{},added:[],removed:[],t:0};saveRoster();toast('기본 명단으로 되돌렸어요')});break;
+    case 'dcat':DX.cat=el.dataset.v;DX.limit=60;renderDex();break;
+    case 'dmiss':DX.missing=!DX.missing;DX.limit=60;renderDex();break;
+    case 'more':DX.limit+=60;renderDex();break;
+    case 'close':closeModal();break;
+    case 'pickfile':$('#file').click();break;
+    case 'delphoto':{const id=MODAL.id;removePhoto(id).then(()=>{toast('삭제했어요');renderPhotoModal();rerender()});break}
+  }
+});
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+document.addEventListener('keydown',e=>{
+  if($('#modal').classList.contains('on')){if(e.key==='Escape')closeModal();return}
+  if(VIEW!=='match')return;
+  if(e.key==='ArrowLeft')choose(0);else if(e.key==='ArrowRight')choose(1);else if(e.key==='z'||e.key==='Z'||e.key==='Backspace')undo();
+});
+
+/* ===================== BOOT ===================== */
+/* ===================== PACK (사진·명단 내보내기/가져오기) ===================== */
+const okImg = v => typeof v==='string' && /^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(v) && v.length<2e6;
+async function loadSitePack(){
+  if(!/^https?:$/.test(location.protocol))return;
+  try{const r=await fetch('pack.json',{cache:'no-cache'});if(!r.ok)return;const p=await r.json();
+    const ph={};if(p&&p.photos&&typeof p.photos==='object')for(const [k,v] of Object.entries(p.photos))if(okImg(v))ph[k]=v;
+    Site.photos=ph;Site.n=Object.keys(ph).length;
+    if(p&&p.roster){const r2=normRoster(p.roster);if(r2.t>ROSTER.t){ROSTER=r2;applyRoster()}}
+    rerender();
+  }catch(e){}
+}
+async function srcToDataURL(src){if(src.startsWith('data:'))return src;const r=await fetch(src);return await blobToDataURL(await r.blob())}
+async function exportPack(btn){
+  if(btn)btn.classList.add('busy');toast('사진을 모으는 중…');
+  try{
+    const photos={};
+    for(const p of PLAYERS){const src=photoOf(p.id);if(!src)continue;try{photos[p.id]=await srcToDataURL(src)}catch(e){}}
+    const pack={v:1,t:Date.now(),roster:ROSTER,photos};
+    const json=JSON.stringify(pack);
+    let done=false;
+    if(window.claude&&typeof window.claude.use==='function'){try{const dl=await claude.use('downloads');if(dl){await dl.save({filename:'pack.json',data:json});done=true}}catch(e){console.warn(e)}}
+    if(!done){const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='pack.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000)}
+    toast(`pack.json 저장 (사진 ${Object.keys(photos).length}장)`);
+  }catch(e){console.warn(e);toast('내보내기에 실패했어요')}
+  if(btn)btn.classList.remove('busy');
+}
+async function importPack(file){
+  try{const p=JSON.parse(await file.text());let n=0;
+    if(p&&p.photos&&typeof p.photos==='object')for(const [k,v] of Object.entries(p.photos)){if(okImg(v)&&(BYID[k]||/^c-[a-z0-9-]{1,80}$/.test(k))){Local.photos[k]=v;await idbPut(k,v);n++}}
+    if(p&&p.roster){ROSTER=normRoster(p.roster);saveRoster()}
+    rerender();toast(`가져오기 완료 (사진 ${n}장${p&&p.roster?' · 명단 포함':''})`);
+  }catch(e){toast('pack.json 파일을 읽지 못했어요')}
+}
+$('#packfile').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)importPack(f)});
+
+(async function boot(){
+  renderHome();
+  if(await idbOpen()){Local.photos=await idbAll();rerender()}
+  loadSitePack();
+  initCloud();
+})();
+</script>
+</body>
+</html>
