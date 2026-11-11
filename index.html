@@ -843,8 +843,8 @@ const sizeList = m => SIZES[m].filter(sz=>sz==='full'||sz<poolOf(m).length);
 const sizeOf = m => sizeList(m).includes(SZ[m])?SZ[m]:'full';
 const cntOf = (m,sz) => sz==='full'?poolOf(m).length:sz;
 const pow2 = n => {let P=1;while(P*2<=n)P*=2;return P};
-const matchInfo = n => {if(n===pow2(n))return `${n-1}경기`;const h=Math.ceil(n/2),P=pow2(h);
-  return `1라운드 ${Math.floor(n/2)}경기${h===P?'':` → 예선 ${h-P}경기`} → ${P}강 · 총 ${n-1}경기`};
+const roundPath = n => {const a=[n];while(n>1){n=Math.ceil(n/2);a.push(n)}return a};
+const matchInfo = n => {const a=roundPath(n);return (n===pow2(n)?'':a.slice(0,-1).join('→')+' · ')+`총 ${n-1}경기`};
 function renderHome(){
   const pc=photoCount();
   let h=`<div class="hero"><h1 class="disp">레전드 <b>월드컵</b></h1><p>역대 인기 축구선수 ${active().length}명 · 이상형 월드컵 &amp; 4-3-3 드림 스쿼드</p></div>`;
@@ -875,7 +875,7 @@ function openSize(mode){
        <div class="disp" style="font-size:24px;min-width:84px;color:${mode==='ALL'?'var(--accent)':'var(--'+mode+')'}">${n}강</div>
        <div><div class="k">${sz==='full'?'전체 출전 ('+n+'명 전원)':'랜덤 '+n+'명 추첨'}</div><div class="c">${matchInfo(n)}</div></div>
        <span class="rk">${sz===cur?'최근 선택':''}</span></button>`}).join('')}</div>
-   <div class="muted" style="font-size:12px;margin-top:10px">16·32·64·128·256강이 아니면 전원이 1라운드를 치른 뒤, 필요하면 예선으로 인원을 맞춰 정식 토너먼트로 들어가요.</div>`;
+   <div class="muted" style="font-size:12px;margin-top:10px">매 라운드 살아남은 선수 전원이 출전해 절반씩 줄어요. 홀수 라운드에서는 1명이 무작위로 부전승해요.</div>`;
   openModal();
 }
 function startTournament(mode,size){
@@ -883,13 +883,12 @@ function startTournament(mode,size){
   let ids=shuffle(poolOf(mode).map(p=>p.id));
   if(size!=='full'&&ids.length>size)ids=ids.slice(0,size);
   T={mode,size,n:ids.length,total:ids.length-1,played:0,elim:[],hist:[]};
-  setupRound(ids,true);saveProgress();show('match');
+  setupRound(ids);saveProgress();show('match');
 }
-function setupRound(ent,first){
-  const len=ent.length;let P=1;while(P*2<=len)P*=2;
-  if(first&&len!==P){const m=Math.floor(len/2);T.cur=ent.slice(0,2*m);T.byes=ent.slice(2*m);T.prelim=true;T.label=`1라운드 ${len}→${Math.ceil(len/2)}`}
-  else if(len===P){T.cur=ent;T.byes=[];T.prelim=false;T.label=len===2?'결승':len===4?'준결승':len+'강'}
-  else{const m=len-P;T.cur=ent.slice(0,2*m);T.byes=ent.slice(2*m);T.prelim=true;T.label=`예선 ${len}→${P}`}
+function setupRound(ent){
+  const len=ent.length,m=Math.floor(len/2);
+  T.cur=ent.slice(0,2*m);T.byes=ent.slice(2*m);T.prelim=false;
+  T.label=len===2?'결승':len===4?'준결승':len+'강';
   T.rsize=len;T.i=0;T.win=[];
 }
 function saveProgress(){if(T)lsSet('lwc_progress',T);else lsDel('lwc_progress')}
@@ -900,7 +899,7 @@ function pick(side){
   const w=side?b:a,l=side?a:b;
   T.win.push(w);T.elim.push([l,T.prelim?0:T.rsize]);T.played++;T.i++;
   if(T.i*2>=T.cur.length){
-    const next=T.prelim?shuffle(T.win.concat(T.byes)):T.win.slice();
+    const next=(T.prelim||T.byes.length)?shuffle(T.win.concat(T.byes)):T.win.slice();
     if(next.length===1){finish(next[0]);return}
     setupRound(next);
   }
@@ -910,7 +909,7 @@ function undo(){if(!T||!T.hist.length)return;const s=T.hist.pop();Object.assign(
 function finish(champ){
   const order=[champ,...T.elim.map(e=>e[0]).reverse()];
   R[T.mode]={order,date:Date.now(),n:T.n,size:T.size};
-  LAST={mode:T.mode,n:T.n,champ,elim:T.elim.slice(-15)};lsSet('lwc_last',LAST);
+  LAST={mode:T.mode,n:T.n,champ,elim:T.elim.slice(-40)};lsSet('lwc_last',LAST);
   T=null;saveProgress();persistState();show('result');
 }
 let animLock=false;
@@ -927,7 +926,7 @@ function renderMatch(){
   const nm=T.cur.length/2;
   $('#v-match').innerHTML=`
   <div class="mhead"><button class="btn sm" data-act="home">✕</button>
-    <div class="ttl"><div class="r disp">${esc(T.label)}</div><div class="m">${MODES[T.mode].ko} ${T.n}강 · ${T.i+1} / ${nm}</div></div>
+    <div class="ttl"><div class="r disp">${esc(T.label)}</div><div class="m">${MODES[T.mode].ko} ${T.n}강 · ${T.i+1} / ${nm}${T.byes.length?' · 부전승 1명':''}</div></div>
     <button class="btn sm" data-act="undo" ${T.hist.length?'':'disabled style="opacity:.35"'}>↶</button></div>
   <div class="prog"><i style="width:${T.played/T.total*100}%"></i></div>
   <div class="pcount"><span>전체 진행 ${T.played} / ${T.total}</span><span>${Math.round(T.played/T.total*100)}%</span></div>
@@ -946,16 +945,15 @@ function renderResult(){
   if(!LAST||!BYID[LAST.champ]){show('home');return}
   const c=BYID[LAST.champ];
   const group=rs=>LAST.elim.filter(e=>e[1]===rs).map(e=>BYID[e[0]]).filter(Boolean).reverse();
-  const ru=group(2),sf=group(4),qf=group(8);
+  const rs=[...new Set(LAST.elim.map(e=>e[1]).filter(x=>x>=2))].sort((a,b)=>a-b).slice(0,3);
+  const grp=rs.map(r=>({r,list:group(r),t:r===2?'준우승':r+'강'}));
   const mini=(p,tag)=>`<button class="mini" data-act="photo" data-id="${p.id}">${avatar(p)}<div><div class="k">${esc(p.ko)}</div><div class="c">${esc(p.pos)} · ${esc(p.club)}</div></div><span class="rk">${tag}</span></button>`;
   $('#v-result').innerHTML=`
    <div class="mhead"><button class="btn sm" data-act="home">✕</button><div class="ttl"><div class="m">${MODES[LAST.mode].ko} ${LAST.n}강 결과</div></div><span style="width:40px"></span></div>
    <div class="champ"><div class="crown">🏆</div><div class="disp" style="font-size:26px;margin-bottom:10px">나의 최애 ${MODES[LAST.mode].ko==='전체 통합'?'선수':MODES[LAST.mode].ko}</div>
      <div class="pc" style="pointer-events:none">${avatar(c)}<span class="posb pos ${c.cat}">${esc(c.pos)}</span>
        <div class="info"><div class="ko">${esc(c.ko)}</div><div class="en">${esc(c.en)}</div><div class="club">${esc(c.club)}</div></div></div></div>
-   ${ru.length?`<div class="sec-t">준우승</div><div class="rlist">${ru.map(p=>mini(p,'2위')).join('')}</div>`:''}
-   ${sf.length?`<div class="sec-t">4강</div><div class="rlist">${sf.map(p=>mini(p,'4강')).join('')}</div>`:''}
-   ${qf.length?`<div class="sec-t">8강</div><div class="rlist">${qf.map(p=>mini(p,'8강')).join('')}</div>`:''}
+   ${grp.filter(g=>g.list.length).map(g=>`<div class="sec-t">${g.t}</div><div class="rlist">${g.list.map(p=>mini(p,g.r===2?'2위':g.t)).join('')}</div>`).join('')}
    <div class="row" style="margin-top:20px;justify-content:center">
      <button class="btn" data-act="copyres">📋 결과 복사</button>
      <button class="btn" data-act="start" data-m="${LAST.mode}">🔁 다시 하기</button>
@@ -1177,7 +1175,8 @@ document.addEventListener('click',e=>{
     case 'resetov':OV={};lsSet('lwc_ovt',Date.now());persistState();renderSquad();break;
     case 'copysq':copyText(squadText());break;
     case 'copyres':{const c=BYID[LAST.champ];const g=rs=>LAST.elim.filter(x=>x[1]===rs).map(x=>BYID[x[0]].ko).reverse();
-      copyText(`🏆 나의 ${MODES[LAST.mode].ko} ${LAST.n}강 우승: ${c.ko} (${c.club})\n🥈 준우승: ${g(2).join(', ')}\n4강: ${g(4).join(', ')}\n#레전드월드컵`);break}
+      const r3=[...new Set(LAST.elim.map(e=>e[1]).filter(x=>x>2))].sort((a,b)=>a-b)[0];
+      copyText(`🏆 나의 ${MODES[LAST.mode].ko} ${LAST.n}강 우승: ${c.ko} (${c.club})\n🥈 준우승: ${g(2).join(', ')}${r3?`\n${r3}강: ${g(r3).join(', ')}`:''}\n#레전드월드컵`);break}
     case 'exportpack':exportPack(el);break;
     case 'importpack':$('#packfile').click();break;
     case 'addp':openEdit(null);break;
